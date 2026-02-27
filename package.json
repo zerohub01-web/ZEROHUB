@@ -1,0 +1,19 @@
+{
+  "name": "zero-os-platform",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "npm run dev --workspace @zero/web",
+    "dev:api": "npm run dev --workspace @zero/api",
+    "build": "npm run build --workspace @zero/web && npm run build --workspace @zero/api",
+    "lint": "npm run lint --workspace @zero/web && npm run lint --workspace @zero/api"
+  },
+  "overrides": {
+    "three-mesh-bvh": "0.8.0"
+  }
+}
