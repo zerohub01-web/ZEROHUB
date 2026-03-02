@@ -51,5 +51,5 @@ app.use("/api/admin", adminRouter);
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   // eslint-disable-next-line no-console
   console.error(err);
-  res.status(500).json({ message: "Internal server error" });
+  res.status(500).json({ message: "Internal server error", error: err.message, stack: err.stack });
 });
