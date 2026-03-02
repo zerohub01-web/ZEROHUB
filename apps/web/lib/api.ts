@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
-
+// Use relative URLs to go through the Next.js proxy in next.config.js
+// This creates a Same-Site request and completely solves third-party cookie blocking.
 export const api = axios.create({
-  baseURL,
+  baseURL: "",
   withCredentials: true
 });
