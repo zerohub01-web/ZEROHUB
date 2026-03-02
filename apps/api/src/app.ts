@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import helmet from "helmet";
+import * as helmet from "helmet";
 import cookieParser from "cookie-parser";
 import mongoSanitize from "express-mongo-sanitize";
 import morgan from "morgan";
@@ -11,7 +11,7 @@ import { authRouter } from "./routes/auth.routes.js";
 
 export const app = express();
 
-app.use(helmet());
+app.use(helmet.default());
 app.use(
   cors({
     origin(origin, callback) {
