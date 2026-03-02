@@ -16,14 +16,20 @@ app.use(
   cors({
     origin(origin, callback) {
       if (!origin) return callback(null, true);
+
+      const cleanOrigin = origin.replace(/\/$/, "");
+      const cleanEnvConfig = env.clientOrigin?.replace(/\/$/, "");
+
       const allowed = new Set([
-        env.clientOrigin,
+        cleanEnvConfig,
+        "https://zerohub-api.vercel.app",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:3001",
         "http://127.0.0.1:3001"
       ]);
-      if (allowed.has(origin)) return callback(null, true);
+
+      if (allowed.has(cleanOrigin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true
