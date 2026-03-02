@@ -12,7 +12,7 @@ function setCustomerCookie(res: Response, token: string) {
   res.cookie("customer_token", token, {
     httpOnly: true,
     secure: env.cookieSecure,
-    sameSite: "lax",
+    sameSite: env.cookieSecure ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 }
