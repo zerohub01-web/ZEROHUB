@@ -11,6 +11,8 @@ import { authRouter } from "./routes/auth.routes.js";
 
 export const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(helmet.default());
 app.use(
   cors({
