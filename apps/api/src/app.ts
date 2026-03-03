@@ -23,6 +23,8 @@ app.use(
       const allowed = new Set([
         cleanEnvConfig,
         "https://zerohub-api.vercel.app",
+        "https://zeroops.in",
+        "https://www.zeroops.in",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:3001",
