@@ -75,8 +75,14 @@ export default function HomePage() {
   useEffect(() => {
     api
       .get("/api/services")
-      .then((res) => setServices(res.data))
-      .catch(() => setServices([]));
+      .then((res) => {
+        if (Array.isArray(res.data)) setServices(res.data);
+        else setServices([]);
+      })
+      .catch((err) => {
+        console.error("Service fetch failed:", err);
+        setServices([]);
+      });
   }, []);
 
   async function handleBooking(formData: FormData) {
@@ -238,7 +244,7 @@ export default function HomePage() {
                 transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="soft-card p-6 md:p-8 hover-lift"
               >
-                <h3 className="text-2xl font-display text-[var(--ink)]">{service.title}</h3>
+                <h3 className="text-2xl font-display text-[var(--ink)]">{service?.title || "Project Node"}</h3>
                 <p className="text-sm text-[var(--muted)] mt-4 leading-relaxed">Modular delivery with analytics-backed iteration and operational hardening.</p>
               </motion.article>
             ))
