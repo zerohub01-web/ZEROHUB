@@ -3,6 +3,7 @@ import { BookingModel } from "../models/Booking.js";
 import { ServiceModel } from "../models/Service.js";
 import { sendBookingCreatedEmails, sendBookingStatusEmail } from "../services/email.service.js";
 import { logActivity } from "../services/activity.service.js";
+import { ensureTimelineForBooking } from "./projectTimeline.controller.js";
 
 export async function createBooking(req: Request, res: Response) {
   const { name, email, phone, businessType, teamSize, monthlyLeads, budgetRange, service, date } = req.body;
@@ -50,6 +51,10 @@ export async function updateBookingStatus(req: Request, res: Response) {
 
   booking.status = status;
   await booking.save();
+
+  if (status === "CONFIRMED") {
+    await ensureTimelineForBooking(String(booking._id));
+  }
 
   if (status === "CONFIRMED" || status === "COMPLETED") {
     await sendBookingStatusEmail({
