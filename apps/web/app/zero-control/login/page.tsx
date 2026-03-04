@@ -5,13 +5,60 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { api } from "../../../lib/api";
+import { useRef, useEffect } from "react";
 import { ZeroLogo } from "../../../components/brand/ZeroLogo";
 
 export default function AdminLoginPage() {
     const [form, setForm] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const googleRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+        if (!clientId) return;
+
+        const initGoogle = () => {
+            if (!window.google || !googleRef.current) return;
+
+            window.google.accounts.id.initialize({
+                client_id: clientId,
+                callback: async ({ credential }) => {
+                    const tid = toast.loading("Bridging secure session...");
+                    try {
+                        // 1. Authenticate as customer first
+                        await api.post("/api/auth/google", { credential });
+                        // 2. Request Admin Bridge
+                        await api.post("/api/admin/customer-bridge");
+
+                        toast.success("Identity verified. Accessing Command Center.", { id: tid });
+                        router.push("/zero-control");
+                    } catch (err: any) {
+                        toast.error(err.response?.data?.message || "Bridge failed", { id: tid });
+                    }
+                }
+            });
+
+            window.google.accounts.id.renderButton(googleRef.current, {
+                theme: "filled_blue",
+                size: "large",
+                text: "continue_with",
+                shape: "pill",
+                width: 360
+            });
+        };
+
+        if (window.google) {
+            initGoogle();
+        } else {
+            const script = document.createElement("script");
+            script.src = "https://accounts.google.com/gsi/client";
+            script.async = true;
+            script.onload = initGoogle;
+            document.body.appendChild(script);
+        }
+    }, [router]);
 
     async function handleLogin(e: FormEvent) {
         e.preventDefault();
@@ -100,6 +147,13 @@ export default function AdminLoginPage() {
                             {!loading && <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />}
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-10 transition-opacity" />
                         </button>
+
+                        <div className="relative py-4">
+                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-black/5"></div></div>
+                            <div className="relative flex justify-center text-[10px] uppercase tracking-widest text-[var(--muted)] font-bold"><span className="bg-[var(--bg-a)] px-4">Trusted Identity Bridge</span></div>
+                        </div>
+
+                        <div className="flex justify-center" ref={googleRef}></div>
                     </form>
 
                     <div className="mt-8 pt-8 border-t border-black/5 w-full text-center">
