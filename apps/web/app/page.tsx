@@ -448,12 +448,6 @@ export default function HomePage() {
 
       <SiteFooter />
 
-      {/* Mobile Sticky CTA */}
-      <div className="mobile-cta-bar">
-        <a href="/book" className="btn-primary flex-1 py-3 text-center text-sm font-semibold shadow-lg shadow-cyan-900/10">
-          Get Free Automation Audit
-        </a>
-      </div>
     </main>
   );
 }
