@@ -27,10 +27,8 @@ export default function AdminLoginPage() {
                 callback: async ({ credential }) => {
                     const tid = toast.loading("Bridging secure session...");
                     try {
-                        // 1. Authenticate as customer first
-                        await api.post("/api/auth/google", { credential });
-                        // 2. Request Admin Bridge
-                        await api.post("/api/admin/customer-bridge");
+                        // Consolidated Bridge: Verifies Google Identity & Admin Permissions in 1 step
+                        await api.post("/api/auth/google", { credential, isAdminBridge: true });
 
                         toast.success("Identity verified. Accessing Command Center.", { id: tid });
                         router.push("/zero-control");

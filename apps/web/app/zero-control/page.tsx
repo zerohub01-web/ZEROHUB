@@ -93,9 +93,11 @@ export default function ZeroControlAdminLayout() {
 
         <div className="p-8">
           <button
-            onClick={async () => {
-              await api.post("/api/admin/logout");
+            onClick={() => {
+              // Instant Logout: Redirect immediately while cleanup happens in background
               router.push("/zero-control/login");
+              api.post("/api/admin/logout").catch(() => { });
+              toast.success("Session terminated.");
             }}
             className="w-full flex items-center justify-center gap-3 px-5 py-4 rounded-3xl bg-red-50 text-red-600 hover:bg-red-100 text-sm font-bold transition-all border border-red-200/50"
           >

@@ -46,7 +46,7 @@ export async function loginCustomer(req: Request, res: Response) {
 }
 
 export async function loginWithGoogle(req: Request, res: Response) {
-  const { credential } = req.body as { credential: string };
+  const { credential, isAdminBridge } = req.body as { credential: string; isAdminBridge?: boolean };
   if (!googleClient || !env.googleClientId) {
     return res.status(400).json({ message: "Google auth is not configured" });
   }
@@ -66,6 +66,27 @@ export async function loginWithGoogle(req: Request, res: Response) {
 
   const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
   setCustomerCookie(res, token);
+
+  // If Admin Bridge requested, check permissions and set admin token immediately
+  if (isAdminBridge) {
+    const customerEmail = payload.email.trim().toLowerCase();
+    const allowedEmail = env.adminNotifyEmail.trim().toLowerCase();
+
+    if (customerEmail === allowedEmail) {
+      const { signToken } = await import("../utils/auth.js");
+      const adminToken = signToken({ adminId: customerEmail, role: "SUPER_ADMIN" });
+
+      res.cookie("token", adminToken, {
+        httpOnly: true,
+        secure: env.cookieSecure,
+        sameSite: env.cookieSecure ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7
+      });
+
+      const { logActivity } = await import("../services/activity.service.js");
+      logActivity("ADMIN_LOGIN_GOOGLE_BRIDGE", customerEmail);
+    }
+  }
 
   return res.json({ customer: { id: customer._id, name: customer.name, email: customer.email } });
 }

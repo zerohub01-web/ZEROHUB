@@ -1,8 +1,0 @@
-(node:32528) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-(node:10616) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-npm error Lifecycle script `dev` failed with error:
-npm error code 3221225786
-^Cnpm error path C:\Users\karth\OneDrive\Desktop\karthi\zero 2kid\zero 2kid\apps\web
-^C

@@ -22,7 +22,8 @@ export async function loginAdmin(req: Request, res: Response) {
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 
-  await logActivity("ADMIN_LOGIN", admin.adminId);
+  // Non-blocking log
+  logActivity("ADMIN_LOGIN", admin.adminId);
 
   return res.json({ adminId: admin.adminId, role: admin.role });
 }
@@ -46,7 +47,8 @@ export async function loginAdminFromCustomer(req: Request, res: Response) {
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 
-  await logActivity("ADMIN_LOGIN_CUSTOMER_BRIDGE", customerEmail);
+  // Non-blocking log
+  logActivity("ADMIN_LOGIN_CUSTOMER_BRIDGE", customerEmail);
 
   return res.json({ adminId: customerEmail, role: "SUPER_ADMIN" });
 }
