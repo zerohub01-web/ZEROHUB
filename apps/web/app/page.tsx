@@ -9,6 +9,8 @@ import { ZeroLogo } from "../components/brand/ZeroLogo";
 import { CtaBlock } from "../components/CtaBlock";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+import { TrustSection } from "../components/TrustSection";
+import { VisualProof } from "../components/VisualProof";
 
 const Hero3D = dynamic(() => import("../components/os/Hero3D"), { ssr: false });
 
@@ -20,9 +22,10 @@ const trust = [
 ];
 
 const process = [
-  { step: "01", title: "Architecture", copy: "Define revenue flow, conversion points, and operational bottlenecks." },
-  { step: "02", title: "Build", copy: "Ship production website, admin system, and secure analytics stack." },
-  { step: "03", title: "Scale", copy: "Track KPIs and execute weekly optimization cycles." }
+  { step: "01", title: "System Audit", copy: "We map your current manual workflows, data silos, and operational bottlenecks." },
+  { step: "02", title: "Build Automation", copy: "Our engineers build the custom pipes that connect your business events to actions." },
+  { step: "03", title: "Deploy Dashboard", copy: "You get a secure, glassmorphism command center to oversee every automation." },
+  { step: "04", title: "Track & Optimize", copy: "Monitor analytics in real-time and execute weekly performance tuning." }
 ];
 
 const features = [
@@ -146,11 +149,11 @@ export default function HomePage() {
             Operating System for Growth Teams
           </p>
           <h1 className="mt-6 text-5xl md:text-7xl leading-[0.96] font-display tracking-tight text-[var(--ink)]">
-            A website that runs
-            <span className="block text-[var(--accent)]">your business.</span>
+            We replace manual work
+            <span className="block text-[var(--accent)]">with automation.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-[var(--muted)]">
-            ZERO combines cinematic brand presence with booking automation, secure admin controls, and decision-grade analytics.
+            ZERO OS is a business automation system that removes operational bottlenecks through custom-built dashboards, AI-driven workflows, and real-time observability.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a href="/book" className="btn-primary hover-lift rounded-full px-8 py-3.5 text-sm md:text-base font-semibold shadow-md shadow-[var(--ink)]/10">Start Project</a>
@@ -181,6 +184,9 @@ export default function HomePage() {
           </div>
         </motion.div>
       </section>
+
+      <TrustSection />
+      <VisualProof />
 
       <section className="relative z-10 border-y border-black/10 bg-white/45 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 py-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
@@ -352,6 +358,10 @@ export default function HomePage() {
       </section>
 
       <section id="process" className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-12 md:pb-14 lg:pb-16">
+        <div className="mb-12">
+          <p className="text-xs uppercase tracking-[0.2em] font-bold text-[var(--accent)] mb-4">The Methodology</p>
+          <h2 className="text-4xl md:text-5xl font-display text-[var(--ink)]">How ZERO Works.</h2>
+        </div>
         <div className="grid md:grid-cols-3 gap-4">
           {process.map((item) => (
             <article key={item.step} className="soft-card p-6">
