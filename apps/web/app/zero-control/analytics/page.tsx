@@ -24,7 +24,7 @@ interface ActivityItem {
 }
 
 export default function AdminAnalyticsPage() {
-  const [filter, setFilter] = useState<"today" | "week" | "month" | "all">("today");
+  const [filter, setFilter] = useState<"hour" | "today" | "week" | "month" | "all">("today");
   const [kpis, setKpis] = useState<KPIs | null>(null);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
