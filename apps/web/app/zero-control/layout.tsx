@@ -1,7 +1,7 @@
 "use client";
 
 import { ZeroLogo } from "../../components/brand/ZeroLogo";
-import { api } from "../../../lib/api";
+import { api } from "../../lib/api";
 import { toast } from "react-hot-toast";
 import { LogOut, Home, Users, BarChart, Briefcase } from "lucide-react";
 import Link from "next/link";
@@ -32,12 +32,12 @@ export default function ZeroControlAdminLayout({ children }: { children: ReactNo
           <Link href="/zero-control/works" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-black/5 text-sm font-medium transition text-[var(--ink)]">
             <Briefcase size={18} /> Previous Works
           </Link>
-          <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--muted)] hover:bg-black/5 text-sm font-medium transition line-through">
+          <Link href="/zero-control/clients" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-black/5 text-sm font-medium transition text-[var(--ink)]">
             <Users size={18} /> Clients
-          </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--muted)] hover:bg-black/5 text-sm font-medium transition line-through">
+          </Link>
+          <Link href="/zero-control/analytics" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-black/5 text-sm font-medium transition text-[var(--ink)]">
             <BarChart size={18} /> Analytics
-          </a>
+          </Link>
         </nav>
         <div className="p-4 border-t border-black/10">
           <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium transition">
