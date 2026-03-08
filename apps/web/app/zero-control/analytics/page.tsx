@@ -89,7 +89,7 @@ export default function AdminAnalyticsPage() {
           ].map((f) => (
             <button
               key={f.id}
-              onClick={() => setFilter(f.id)}
+              onClick={() => setFilter(f.id as "hour" | "today" | "week" | "month" | "all")}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${
                 filter === f.id ? "bg-[var(--ink)] text-white shadow-sm" : "text-[var(--muted)] hover:text-black"
               }`}
