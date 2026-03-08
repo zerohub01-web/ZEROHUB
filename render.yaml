@@ -4,7 +4,7 @@ services:
     env: node
     plan: free # Explicitly setting this forces Render to not ask for payment
     region: frankfurt # or your preferred region like 'oregon'
-    repo: https://github.com/zerohub01-web/ZEROHUB
+    repo: https://github.com/zerohub01-web/zero-2kid
     rootDir: .
     buildCommand: npm install && npm run build --workspace @zero/api
     startCommand: npm run start --workspace @zero/api
