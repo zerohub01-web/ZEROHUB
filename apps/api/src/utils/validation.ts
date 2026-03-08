@@ -38,6 +38,7 @@ export const createBookingSchema = z.object({
     monthlyLeads: z.string().optional().default(""),
     budgetRange: z.string().optional().default(""),
     service: z.string().min(2),
+    currentWorkflow: z.string().optional().default(""),
     date: z.string().datetime()
   })
 });

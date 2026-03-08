@@ -175,6 +175,10 @@ export default function AdminClientsPage() {
             <div className="flex items-center gap-3 text-sm"><Briefcase size={16} className="text-[var(--muted)]" /> <b>{selectedBooking.service}</b></div>
             <div className="flex items-center gap-3 text-sm"><Calendar size={16} className="text-[var(--muted)]" /> Goal: {new Date(selectedBooking.date).toLocaleDateString()}</div>
             <div className="mt-4 pt-4 border-t">
+              <p className="text-xs text-[var(--muted)] uppercase">Client Workflow/Bottlenecks</p>
+              <p className="text-sm mt-1 bg-gray-50 p-3 rounded border italic">"{selectedBooking.currentWorkflow || "No detail provided"}"</p>
+            </div>
+            <div className="mt-4 pt-4 border-t">
               <p className="text-xs text-[var(--muted)] uppercase">Budget Range</p>
               <p className="font-medium mt-1">{selectedBooking.budgetRange || "Not specified"}</p>
             </div>

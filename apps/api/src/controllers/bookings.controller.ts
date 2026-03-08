@@ -5,7 +5,7 @@ import { sendBookingCreatedEmails, sendBookingStatusEmail } from "../services/em
 import { logActivity } from "../services/activity.service.js";
 
 export async function createBooking(req: Request, res: Response) {
-  const { name, email, phone, businessType, teamSize, monthlyLeads, budgetRange, service, date } = req.body;
+  const { name, email, phone, businessType, teamSize, monthlyLeads, budgetRange, service, currentWorkflow, date } = req.body;
 
   const serviceDoc = await ServiceModel.findOne({ title: service, isActive: true });
   const priceSnapshot = serviceDoc ? serviceDoc.price : 0;
@@ -19,6 +19,7 @@ export async function createBooking(req: Request, res: Response) {
     monthlyLeads,
     budgetRange,
     service,
+    currentWorkflow,
     servicePriceSnapshot: priceSnapshot,
     date,
     status: "NEW"
@@ -52,6 +53,9 @@ export async function updateBookingStatus(req: Request, res: Response) {
   await booking.save();
 
   if (status === "CONFIRMED" || status === "COMPLETED") {
+    const { ensureTimelineForBooking } = await import("./projectTimeline.controller.js");
+    await ensureTimelineForBooking(id);
+
     await sendBookingStatusEmail({
       customerEmail: booking.email,
       customerName: booking.name,

@@ -11,6 +11,7 @@ export interface BookingDocument extends mongoose.Document {
   monthlyLeads?: string;
   budgetRange?: string;
   service: string;
+  currentWorkflow: string;
   servicePriceSnapshot: number;
   date: Date;
   status: BookingStatus;
@@ -27,6 +28,7 @@ const bookingSchema = new Schema<BookingDocument>(
     monthlyLeads: { type: String, trim: true, default: "" },
     budgetRange: { type: String, trim: true, default: "" },
     service: { type: String, required: true, trim: true },
+    currentWorkflow: { type: String, default: "" },
     servicePriceSnapshot: { type: Number, required: true, min: 0 },
     date: { type: Date, required: true },
     status: { type: String, enum: ["NEW", "CONFIRMED", "COMPLETED"], default: "NEW" }
