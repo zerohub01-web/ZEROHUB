@@ -75,6 +75,8 @@ export const workSchema = z.object({
     slug: z.string().min(2),
     coverImage: z.string().url(),
     gallery: z.array(z.string().url()).default([]),
+    type: z.string().min(2),
+    result: z.string().min(2),
     seoTitle: z.string().default(""),
     seoDescription: z.string().default("")
   })

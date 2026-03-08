@@ -28,3 +28,8 @@ export async function deleteWork(req: Request, res: Response) {
   await logActivity("WORK_DELETED", req.admin?.adminId ?? "system", { workId: String(work._id) });
   return res.json({ ok: true });
 }
+
+export async function getPublicWorks(_req: Request, res: Response) {
+  const items = await WorkModel.find().select("-__v").sort({ createdAt: -1 });
+  return res.json(items);
+}
