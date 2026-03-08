@@ -1,4 +1,4 @@
-﻿import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import { CustomerModel } from "../models/Customer.js";
 import { BookingModel } from "../models/Booking.js";
@@ -96,7 +96,7 @@ export async function getCustomerProjects(req: Request, res: Response) {
         date: b.date,
         value: b.servicePriceSnapshot,
         businessType: b.businessType,
-        milestones: timeline?.milestones ?? []
+        milestones: timeline?.milestones ? JSON.parse(JSON.stringify(timeline.milestones)) : []
       };
     })
   );

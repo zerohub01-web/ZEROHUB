@@ -1,4 +1,4 @@
-﻿import { Request, Response } from "express";
+import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { BookingModel } from "../models/Booking.js";
 import { ProjectTimelineModel } from "../models/ProjectTimeline.js";
@@ -60,7 +60,7 @@ export async function updateMilestone(req: Request, res: Response) {
   if (fileUrl) milestone.files.push(fileUrl);
   if (comment) milestone.comments.push({ text: comment, by: req.admin?.adminId ?? "admin", at: new Date() });
   milestone.updatedAt = new Date();
-
+  timeline.markModified("milestones");
   await timeline.save();
 
   if (statusChanged) {
