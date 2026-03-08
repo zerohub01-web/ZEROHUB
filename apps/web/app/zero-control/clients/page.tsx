@@ -13,6 +13,7 @@ interface Booking {
   businessType: string;
   budgetRange: string;
   service: string;
+  currentWorkflow: string;
   date: string;
   status: "NEW" | "CONFIRMED" | "COMPLETED";
   createdAt: string;

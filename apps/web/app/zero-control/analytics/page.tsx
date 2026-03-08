@@ -38,13 +38,22 @@ export default function AdminAnalyticsPage() {
     try {
       // Fetch KPIs
       const { data: analyticsData } = await api.get(`/api/admin/analytics?filter=${filter}`);
-      setKpis(analyticsData.kpis);
+      if (analyticsData && analyticsData.kpis) {
+        setKpis(analyticsData.kpis);
+      } else {
+        console.warn("Analytics API returned no KPIs", analyticsData);
+        setKpis({
+          totalBookings: 0, revenue: 0, growthPercent: 0, activeCustomers: 0, 
+          conversionRate: 0, repeatCustomers: 0, topService: "None"
+        });
+      }
 
       // Fetch latest activity log (first 10 items)
       const { data: activityData } = await api.get("/api/admin/activity");
-      setActivities(Array.isArray(activityData) ? activityData.slice(0, 10) : []);
-    } catch {
-      toast.error("Failed to load analytics");
+      setActivities(Array.isArray(activityData) ? activityData.slice(0, 15) : []);
+    } catch (err) {
+      console.error("Analytics Fetch Error:", err);
+      toast.error("Failed to load live analytics data");
     } finally {
       setIsLoading(false);
     }
@@ -152,8 +161,10 @@ export default function AdminAnalyticsPage() {
                             {format.label}
                           </span>
                           <div>
-                            <p className="text-sm text-[var(--ink)] font-medium">{act.userEmail}</p>
-                            <p className="text-xs text-[var(--muted)]">Action ID: {act.action}</p>
+                            <p className="text-sm text-[var(--ink)] font-medium">
+                              {act.metadata?.clientName ? `${act.metadata.clientName} (${act.userEmail})` : act.userEmail}
+                            </p>
+                            <p className="text-xs text-[var(--muted)]">Action: {act.action.replace(/_/g, " ")}</p>
                           </div>
                         </div>
                         <span className="text-xs text-[var(--muted)]">{new Date(act.createdAt).toLocaleString()}</span>
