@@ -1,27 +1,46 @@
-﻿import { ZeroLogo } from "../../components/brand/ZeroLogo";
+﻿import { SiteHeader } from "../../components/SiteHeader";
+import { SiteFooter } from "../../components/SiteFooter";
 
 const tiers = [
   {
-    name: "Launch",
-    price: "₹2,10,000",
-    note: "For teams moving from brochure site to conversion machine.",
-    features: ["Public ZERO website", "Booking pipeline", "Core analytics"],
-    cta: "Start Launch"
+    name: "Digital Storefront",
+    price: "INR 15,000 - 25,000",
+    note: "Productized fast-delivery setup for businesses that need a clean launch quickly.",
+    features: [
+      "Up to 5 static pages (Home, About, Services, Gallery, Contact)",
+      "Mobile-responsive, speed-optimized architecture",
+      "Direct WhatsApp CTA + basic lead capture form",
+      "One round of structural revisions",
+      "Client must provide all final text and media before development"
+    ],
+    cta: "Start Storefront"
   },
   {
-    name: "Scale",
-    price: "₹4,10,000",
-    note: "For growing companies needing secure admin control.",
-    features: ["Everything in Launch", "RBAC admin dashboard", "Service/work CMS", "Activity logging"],
-    cta: "Choose Scale",
+    name: "Business Automation",
+    price: "INR 40,000 - 60,000",
+    note: "For teams replacing manual follow-up and intake work with automation pipelines.",
+    features: [
+      "Everything in Digital Storefront + up to 10 pages and CMS",
+      "Automated intake flows to Google Sheets/CRM",
+      "Instant lead response via email or WhatsApp/SMS workflow",
+      "Custom workflow modules (e.g., admissions or application tracking)",
+      "On-page SEO setup + Google Analytics dashboard"
+    ],
+    cta: "Choose Automation",
     featured: true
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    note: "For multi-team operations and advanced integrations (INR pricing on consultation).",
-    features: ["Custom workflows", "Dedicated architecture", "SLA + support"],
-    cta: "Talk to Sales"
+    name: "Digital Fortress & AI",
+    price: "INR 90,000 - 1,50,000+",
+    note: "Operational infrastructure for companies that need custom systems, AI, and hardened security.",
+    features: [
+      "Custom backend architecture (Node.js or Python)",
+      "Business-trained AI assistant for customer support",
+      "Advanced internal dashboards and predictive logic",
+      "Security hardening: WAF, rate limiting, encrypted data handling",
+      "Priority architecture planning for scale"
+    ],
+    cta: "Book Strategy Call"
   }
 ];
 
@@ -30,27 +49,16 @@ export default function PricingPage() {
     <main className="min-h-screen relative overflow-hidden px-6 md:px-10 py-8">
       <div className="orb orb-a" />
       <div className="orb orb-b" />
+      <SiteHeader />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        <header className="pt-1 md:pt-2 mb-10">
-          <div className="glass-header px-4 md:px-5 py-3 flex items-center justify-between gap-4">
-            <div className="logo-glass">
-              <ZeroLogo variant="inverted" />
-            </div>
-            <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--muted)]">
-              <a href="/" className="hover:text-[var(--ink)] transition">Home</a>
-            </nav>
-            <a href="/" className="btn-secondary rounded-full px-4 py-1.5 text-sm md:hidden">Home</a>
-          </div>
-        </header>
+      <section className="relative z-10 max-w-6xl mx-auto mt-8">
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Pricing</p>
+        <h1 className="text-5xl md:text-6xl font-display text-[var(--ink)] mt-3">Productized tiers with clear boundaries.</h1>
+        <p className="text-[var(--muted)] mt-4 max-w-3xl">
+          These plans are engineered for speed and profitability: strong perceived value, tight scope control, and fast deployment cycles.
+        </p>
 
-        <section className="mb-10">
-          <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Pricing</p>
-          <h1 className="text-5xl md:text-6xl font-display text-[var(--ink)] mt-3">Plans built for growth velocity.</h1>
-          <p className="text-[var(--muted)] mt-4 max-w-2xl">Each tier is structured around shipping outcomes, not billable noise.</p>
-        </section>
-
-        <section className="grid md:grid-cols-3 gap-4">
+        <section className="grid md:grid-cols-3 gap-4 mt-8">
           {tiers.map((tier) => (
             <article
               key={tier.name}
@@ -58,17 +66,23 @@ export default function PricingPage() {
             >
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">{tier.name}</p>
               <p className="text-4xl font-display text-[var(--ink)] mt-3">{tier.price}</p>
-              <p className="text-sm text-[var(--muted)] mt-2">{tier.note}</p>
+              <p className="text-sm text-[var(--muted)] mt-2 leading-relaxed">{tier.note}</p>
               <ul className="mt-4 space-y-2 text-sm text-[var(--ink)]">
                 {tier.features.map((feature) => (
                   <li key={feature}>• {feature}</li>
                 ))}
               </ul>
-              <button className="mt-6 w-full rounded-xl bg-[var(--ink)] text-white py-2.5 text-sm font-semibold">{tier.cta}</button>
+              <a href="/book" className="mt-6 w-full inline-flex items-center justify-center rounded-xl bg-[var(--ink)] text-white py-2.5 text-sm font-semibold">
+                {tier.cta}
+              </a>
             </article>
           ))}
         </section>
-      </div>
+      </section>
+
+      <div className="mt-10"><SiteFooter /></div>
     </main>
   );
 }
+
+

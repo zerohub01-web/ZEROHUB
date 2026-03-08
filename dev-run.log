@@ -1,0 +1,551 @@
+
+> zero-os-platform@1.0.0 dev
+> node scripts/dev.mjs
+
+
+> zero-os-platform@1.0.0 dev:web
+> npm run dev --workspace @zero/web
+
+
+> zero-os-platform@1.0.0 dev:api
+> npm run dev --workspace @zero/api
+
+
+> @zero/web@1.0.0 dev
+> next dev
+
+
+> @zero/api@1.0.0 dev
+> tsx watch src/server.ts
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · typedRoutes
+
+ ✓ Starting...
+MongoDB connected
+API running on http://localhost:4000
+ ✓ Ready in 1752ms
+ ○ Compiling / ...
+ ✓ Compiled / in 6.1s (2625 modules)
+ GET / 200 in 6472ms
+[0mGET /api/services [36m304[0m 34.316 ms - -[0m
+[0mGET /api/services [36m304[0m 4.564 ms - -[0m
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.4s (2660 modules)
+ HEAD /zero-logo.png 404 in 3329ms
+ HEAD /zero-logo.png 404 in 3326ms
+ HEAD /zero-logo.png 404 in 3326ms
+ HEAD /zero-logo.png 404 in 3286ms
+ HEAD /zero-logo.png 404 in 3284ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 3601ms
+ HEAD /zero-logo.png 404 in 14ms
+ GET / 200 in 153ms
+[0mGET /api/services [36m304[0m 3.303 ms - -[0m
+[0mGET /api/services [36m304[0m 3.272 ms - -[0m
+ HEAD /zero-logo.png 404 in 39ms
+ HEAD /zero-logo.png 404 in 40ms
+ HEAD /zero-logo.png 404 in 41ms
+ HEAD /zero-logo.png 404 in 41ms
+ HEAD /zero-logo.png 404 in 47ms
+ HEAD /zero-logo.png 404 in 48ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 24ms
+ GET / 200 in 76ms
+[0mGET /api/services [36m304[0m 2.364 ms - -[0m
+[0mGET /api/services [36m304[0m 2.382 ms - -[0m
+ HEAD /zero-logo.png 404 in 31ms
+ HEAD /zero-logo.png 404 in 32ms
+ HEAD /zero-logo.png 404 in 35ms
+ HEAD /zero-logo.png 404 in 46ms
+ HEAD /zero-logo.png 404 in 48ms
+ HEAD /zero-logo.png 404 in 49ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 22ms
+ GET / 200 in 84ms
+[0mGET /api/services [36m304[0m 2.675 ms - -[0m
+[0mGET /api/services [36m304[0m 1.829 ms - -[0m
+ HEAD /zero-logo.png 404 in 42ms
+ HEAD /zero-logo.png 404 in 43ms
+ HEAD /zero-logo.png 404 in 42ms
+ HEAD /zero-logo.png 404 in 42ms
+ HEAD /zero-logo.png 404 in 44ms
+ HEAD /zero-logo.png 404 in 44ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 11ms
+ GET / 200 in 57ms
+[0mGET /api/services [36m304[0m 2.717 ms - -[0m
+[0mGET /api/services [36m304[0m 2.489 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 10ms
+ ✓ Compiled in 675ms (2625 modules)
+ GET / 200 in 208ms
+[0mGET /api/services [36m304[0m 2.229 ms - -[0m
+[0mGET /api/services [36m304[0m 2.532 ms - -[0m
+ ✓ Compiled /icon.svg in 315ms (1389 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 401ms
+ ✓ Compiled in 675ms (2625 modules)
+ GET / 200 in 214ms
+[0mGET /api/services [36m304[0m 2.217 ms - -[0m
+[0mGET /api/services [36m304[0m 2.096 ms - -[0m
+ ✓ Compiled /icon.svg in 291ms (1389 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 357ms
+ ✓ Compiled in 1090ms (2625 modules)
+ GET / 200 in 196ms
+[0mGET /api/services [36m304[0m 4.466 ms - -[0m
+[0mGET /api/services [36m304[0m 1.956 ms - -[0m
+ ✓ Compiled /icon.svg in 194ms (1389 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 291ms
+ GET / 200 in 198ms
+[0mGET /api/services [36m304[0m 2.084 ms - -[0m
+[0mGET /api/services [36m304[0m 1.861 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 13ms
+ ○ Compiling /features ...
+ ✓ Compiled /features in 921ms (2618 modules)
+ ✓ Compiled /technology in 294ms (2620 modules)
+ ✓ Compiled /maintenance in 274ms (2622 modules)
+ ✓ Compiled /works in 279ms (2624 modules)
+ ✓ Compiled /pricing in 343ms (2626 modules)
+ ✓ Compiled /services in 280ms (2628 modules)
+ ✓ Compiled /testimonials in 419ms (2630 modules)
+ ✓ Compiled /process in 252ms (2632 modules)
+ ✓ Compiled /book in 365ms (2638 modules)
+[0mGET /api/services [36m304[0m 2.692 ms - -[0m
+[0mGET /api/services [36m304[0m 1.780 ms - -[0m
+[0mGET /api/services [36m304[0m 2.134 ms - -[0m
+[0mGET /api/services [36m304[0m 1.881 ms - -[0m
+[0mGET /api/services [36m304[0m 1.926 ms - -[0m
+[0mGET /api/services [36m304[0m 1.848 ms - -[0m
+[0mGET /api/services [36m304[0m 2.194 ms - -[0m
+[0mGET /api/services [36m304[0m 2.122 ms - -[0m
+ ✓ Compiled in 1159ms (1703 modules)
+ ✓ Compiled in 202ms (1271 modules)
+[0mGET /api/services [36m304[0m 1.696 ms - -[0m
+[0mGET /api/services [36m304[0m 1.477 ms - -[0m
+ ✓ Compiled /works in 188ms (434 modules)
+ ✓ Compiled in 539ms (1705 modules)
+ ✓ Compiled /technology in 116ms (436 modules)
+ ✓ Compiled /features in 159ms (438 modules)
+ ✓ Compiled /services in 135ms (440 modules)
+ GET /pricing 200 in 95ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 508ms (464 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 577ms
+ GET /pricing 200 in 93ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 7ms
+ GET /pricing 200 in 77ms
+ GET /pricing 200 in 22ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 7ms
+ GET /pricing 200 in 72ms
+ GET /pricing 200 in 24ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 7ms
+ GET /pricing 200 in 37ms
+ ✓ Compiled / in 460ms (1405 modules)
+[0mGET /api/services [36m304[0m 2.416 ms - -[0m
+[0mGET /api/services [36m304[0m 2.034 ms - -[0m
+ GET / 200 in 143ms
+[0mGET /api/services [36m304[0m 2.231 ms - -[0m
+[0mGET /api/services [36m304[0m 1.716 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 13ms
+ GET / 200 in 74ms
+[0mGET /api/services [36m304[0m 2.100 ms - -[0m
+[0mGET /api/services [36m304[0m 1.478 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 8ms
+ ○ Compiling /portal ...
+ ✓ Compiled /portal in 1294ms (2640 modules)
+[0mGET /api/auth/me [33m401[0m 4.865 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.491 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.228 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.440 ms - 26[0m
+ ✓ Compiled /login in 463ms (2646 modules)
+ GET /login 200 in 555ms
+ GET / 200 in 109ms
+[0mGET /api/services [36m304[0m 2.095 ms - -[0m
+[0mGET /api/services [36m304[0m 2.015 ms - -[0m
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 988ms (2638 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 1106ms
+ GET / 200 in 112ms
+[0mGET /api/services [36m304[0m 2.632 ms - -[0m
+[0mGET /api/services [36m304[0m 1.596 ms - -[0m
+ ✓ Compiled in 360ms (1278 modules)
+ ✓ Compiled in 199ms (1278 modules)
+ ✓ Compiled in 1222ms (2662 modules)
+ GET /login 200 in 108ms
+ ✓ Compiled in 328ms (1281 modules)
+ ✓ Compiled /signup in 444ms (2645 modules)
+ GET /signup 200 in 570ms
+ ✓ Compiled /portal in 296ms (1379 modules)
+[0mGET /api/auth/me [33m401[0m 0.480 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.167 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.207 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.114 ms - 26[0m
+ GET /login 200 in 4ms
+ GET /login 200 in 95ms
+ ✓ Compiled /signup in 168ms (1383 modules)
+ GET /signup 200 in 253ms
+ GET /login 200 in 52ms
+ GET /signup 200 in 67ms
+ GET /login 200 in 64ms
+ ✓ Compiled in 619ms (2666 modules)
+ GET /login 200 in 93ms
+ ✓ Compiled in 758ms (2663 modules)
+ ✓ Compiled in 461ms (2663 modules)
+ ✓ Compiled in 401ms (2672 modules)
+ GET /login 200 in 62ms
+ GET /signup 200 in 68ms
+ ✓ Compiled /_not-found in 386ms (2652 modules)
+ GET /admin 404 in 457ms
+ GET /login 200 in 53ms
+ ○ Compiling /_error ...
+ GET /login 500 in 21ms
+ GET /_next/static/webpack/4d321fcfd63ba855.webpack.hot-update.json 500 in 662ms
+ GET /login 200 in 5ms
+ GET /login 500 in 9ms
+ GET /signup 500 in 14ms
+ ✓ Compiled /_not-found in 1222ms (2908 modules)
+ GET /login 200 in 221ms
+ ✓ Compiled (2885 modules)
+ GET /login 200 in 73ms
+ GET /signup 200 in 59ms
+ GET /signup 200 in 63ms
+ GET /login 200 in 39ms
+ GET /signup 200 in 39ms
+ GET /login 200 in 41ms
+ GET /signup 200 in 66ms
+ GET /login 200 in 51ms
+ ✓ Compiled /portal in 432ms (1424 modules)
+ GET / 200 in 70ms
+[0mGET /api/services [36m304[0m 29.708 ms - -[0m
+[0mGET /api/services [36m304[0m 2.163 ms - -[0m
+ ✓ Compiled /maintenance in 341ms (1419 modules)
+ GET /maintenance 500 in 10ms
+ ○ Compiling /_not-found ...
+ GET /maintenance 500 in 277ms
+ GET /_next/static/webpack/4d321fcfd63ba855.webpack.hot-update.json 500 in 715ms
+ GET /_next/static/webpack/4d321fcfd63ba855.webpack.hot-update.json 500 in 719ms
+ GET /maintenance 500 in 11ms
+ ✓ Compiled /_not-found in 2.9s (2885 modules)
+ GET /_next/static/webpack/4d321fcfd63ba855.webpack.hot-update.json 404 in 2961ms
+ GET /maintenance 200 in 49ms
+ GET /maintenance 200 in 63ms
+ ✓ Compiled /pricing in 194ms (1420 modules)
+ ✓ Compiled /book in 203ms (1424 modules)
+ GET /book 200 in 338ms
+[0mGET /api/services [36m304[0m 5.981 ms - -[0m
+[0mGET /api/services [36m304[0m 2.372 ms - -[0m
+ GET /book 200 in 43ms
+[0mGET /api/services [36m304[0m 2.416 ms - -[0m
+[0mGET /api/services [36m304[0m 1.793 ms - -[0m
+ GET / 200 in 119ms
+ GET /pricing 200 in 31ms
+ GET /services 200 in 86ms
+ GET /maintenance 200 in 74ms
+ ✓ Compiled /features in 357ms (1421 modules)
+ ✓ Compiled /technology in 156ms (1423 modules)
+ ✓ Compiled /works in 179ms (1425 modules)
+ ✓ Compiled /testimonials in 168ms (1427 modules)
+ ✓ Compiled /process in 193ms (1429 modules)
+ ✓ Compiled /book in 204ms (1433 modules)
+[0mGET /api/services [36m304[0m 2.035 ms - -[0m
+[0mGET /api/services [36m304[0m 2.132 ms - -[0m
+ ✓ Compiled in 558ms (1971 modules)
+ GET /book 200 in 119ms
+ ✓ Compiled /portal in 238ms (489 modules)
+[0mGET /api/auth/me [33m401[0m 0.522 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.139 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.126 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.094 ms - 26[0m
+ GET /login 200 in 3ms
+ GET /login 200 in 120ms
+ GET /portal 200 in 68ms
+[0mGET /api/auth/me [33m401[0m 0.196 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.113 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.086 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.139 ms - 26[0m
+ GET /login 200 in 54ms
+ GET /pricing 200 in 65ms
+ ✓ Compiled / in 206ms (1430 modules)
+[0mGET /api/services [36m304[0m 2.221 ms - -[0m
+[0mGET /api/services [36m304[0m 2.093 ms - -[0m
+ ✓ Compiled in 1142ms (2894 modules)
+ ✓ Compiled in 452ms (2894 modules)
+ ✓ Compiled in 426ms (2894 modules)
+ ✓ Compiled in 372ms (2894 modules)
+ GET /pricing 200 in 103ms
+ GET /pricing 200 in 28ms
+ GET /pricing 200 in 23ms
+ ✓ Compiled /icon.svg in 289ms (1447 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 613ms
+ GET /pricing 200 in 618ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 8ms
+[0mGET /api/services [36m304[0m 2.121 ms - -[0m
+[0mGET /api/services [36m304[0m 1.730 ms - -[0m
+ ✓ Compiled in 572ms (2880 modules)
+ GET / 200 in 126ms
+ ✓ Compiled /icon.svg in 185ms (1447 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 254ms
+[0mGET /api/services [36m304[0m 2.040 ms - -[0m
+[0mGET /api/services [36m304[0m 1.969 ms - -[0m
+ ✓ Compiled in 462ms (2926 modules)
+ ✓ Compiled in 402ms (2926 modules)
+ ✓ Compiled in 479ms (2926 modules)
+ ✓ Compiled in 434ms (2926 modules)
+ ✓ Compiled in 414ms (2926 modules)
+ ✓ Compiled in 404ms (2926 modules)
+ ✓ Compiled in 404ms (2926 modules)
+ GET / 200 in 187ms
+[0mGET /api/services [36m304[0m 2.239 ms - -[0m
+[0mGET /api/services [36m304[0m 1.281 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 15ms
+ ✓ Compiled in 469ms (2926 modules)
+ ✓ Compiled in 377ms (2926 modules)
+ GET / 200 in 131ms
+[0mGET /api/services [36m304[0m 1.749 ms - -[0m
+[0mGET /api/services [36m304[0m 1.870 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 11ms
+[0mPOST /api/bookings [33m400[0m 7.256 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.994 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.568 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.583 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.431 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.401 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 2.233 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.364 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.332 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.443 ms - 94[0m
+[0mPOST /api/bookings [33m400[0m 0.285 ms - 94[0m
+ GET / 200 in 51ms
+[0mGET /api/services [36m304[0m 2.625 ms - -[0m
+[0mGET /api/services [36m304[0m 1.910 ms - -[0m
+ GET / 200 in 36ms
+ GET /icon.svg?c213d7debeb2d25f 200 in 12ms
+[0mGET /api/services [36m304[0m 2.068 ms - -[0m
+[0mGET /api/services [36m304[0m 1.567 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 7ms
+[0mPOST /api/bookings [33m400[0m 0.233 ms - 94[0m
+ GET /pricing 200 in 39ms
+ ✓ Compiled in 1293ms (2894 modules)
+[0mGET /api/services [36m304[0m 3.519 ms - -[0m
+[0mGET /api/services [36m304[0m 1.950 ms - -[0m
+ ✓ Compiled in 744ms (2894 modules)
+ ✓ Compiled in 328ms (1479 modules)
+ ✓ Compiled in 468ms (2894 modules)
+ ✓ Compiled in 408ms (2894 modules)
+ ✓ Compiled in 418ms (2894 modules)
+ GET / 200 in 188ms
+ ✓ Compiled /book in 277ms (1419 modules)
+ GET /book 200 in 400ms
+ ✓ Compiled in 422ms (2898 modules)
+ GET / 200 in 132ms
+[0mGET /api/services [36m304[0m 5.390 ms - -[0m
+[0mGET /api/services [36m304[0m 1.673 ms - -[0m
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 621ms (1447 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 872ms
+ GET / 200 in 835ms
+[0mGET /api/services [36m304[0m 2.369 ms - -[0m
+[0mGET /api/services [36m304[0m 2.416 ms - -[0m
+[0mPOST /api/bookings [32m201[0m 998.193 ms - 442[0m
+ ✓ Compiled /book in 202ms (1451 modules)
+[0mGET /api/services [36m304[0m 3.094 ms - -[0m
+[0mGET /api/services [36m304[0m 2.175 ms - -[0m
+ ✓ Compiled /testimonials in 272ms (1445 modules)
+ ✓ Compiled /portal in 250ms (1452 modules)
+[0mGET /api/auth/me [33m401[0m 0.592 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.080 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.119 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.202 ms - 26[0m
+ ✓ Compiled /login in 243ms (1460 modules)
+ GET /login 200 in 400ms
+ ✓ Compiled /signup in 193ms (1428 modules)
+ GET /signup 200 in 339ms
+[0mPOST /api/auth/signup [33m409[0m 9.616 ms - 38[0m
+[0mPOST /api/auth/signup [33m409[0m 2.133 ms - 38[0m
+[0mPOST /api/auth/signup [33m409[0m 2.389 ms - 38[0m
+ GET /login 200 in 71ms
+[0mPOST /api/auth/login [32m200[0m 300.551 ms - 99[0m
+ GET /portal 200 in 53ms
+[0mGET /api/auth/me [32m200[0m 8.775 ms - 87[0m
+[0mGET /api/auth/me [36m304[0m 6.233 ms - -[0m
+[0mGET /api/auth/projects [32m200[0m 26.885 ms - 1652[0m
+[0mGET /api/auth/projects [36m304[0m 9.553 ms - -[0m
+ ✓ Compiled in 1099ms (1964 modules)
+ ✓ Compiled in 218ms (1479 modules)
+ ✓ Compiled in 206ms (1479 modules)
+[0mPOST /api/auth/logout [32m200[0m 0.828 ms - 11[0m
+ ✓ Compiled / in 456ms (1426 modules)
+ GET / 200 in 738ms
+[0mGET /api/services [36m304[0m 2.053 ms - -[0m
+[0mGET /api/services [36m304[0m 2.007 ms - -[0m
+ ✓ Compiled in 431ms (2910 modules)
+ GET /login 200 in 85ms
+ GET /signup 200 in 84ms
+ GET / 200 in 102ms
+[0mGET /api/services [36m304[0m 2.643 ms - -[0m
+[0mGET /api/services [36m304[0m 2.039 ms - -[0m
+ GET / 200 in 39ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 598ms (1454 modules)
+[0mGET /api/services [36m304[0m 2.424 ms - -[0m
+[0mGET /api/services [36m304[0m 2.679 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 12ms
+ GET / 200 in 157ms
+[0mGET /api/services [32m200[0m 2.118 ms - 554[0m
+[0mGET /api/services [32m200[0m 2.213 ms - 554[0m
+ GET / 200 in 31ms
+[0mGET /api/services [36m304[0m 1.801 ms - -[0m
+[0mGET /api/services [36m304[0m 1.664 ms - -[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 7ms
+[0mGET /api/auth/me [33m401[0m 0.212 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.134 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.098 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.084 ms - 26[0m
+ GET /login 200 in 86ms
+[0mPOST /api/auth/login [32m200[0m 290.172 ms - 99[0m
+ GET /portal 200 in 53ms
+[0mGET /api/auth/me [36m304[0m 5.760 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.870 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 11.537 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 8.991 ms - -[0m
+ GET /portal 200 in 67ms
+ GET /portal 200 in 74ms
+[0mGET /api/auth/me [32m200[0m 4.859 ms - 87[0m
+[0mGET /api/auth/me [32m200[0m 3.903 ms - 87[0m
+ GET /icon.svg?c213d7debeb2d25f 200 in 8ms
+[0mGET /api/auth/projects [32m200[0m 19.060 ms - 1652[0m
+[0mGET /api/auth/projects [32m200[0m 16.609 ms - 1652[0m
+[0mGET /api/auth/me [36m304[0m 3.229 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.531 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.510 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 6.077 ms - -[0m
+ ✓ Compiled in 670ms (2901 modules)
+ ✓ Compiled /book in 224ms (1426 modules)
+[0mGET /api/services [36m304[0m 2.025 ms - -[0m
+[0mGET /api/services [36m304[0m 1.552 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.334 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.416 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.064 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 7.054 ms - -[0m
+[0mGET /api/services [36m304[0m 2.034 ms - -[0m
+[0mGET /api/services [36m304[0m 2.145 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.712 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.532 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.176 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 7.896 ms - -[0m
+[0mGET /api/services [36m304[0m 1.848 ms - -[0m
+[0mGET /api/services [36m304[0m 1.218 ms - -[0m
+ ✓ Compiled /process in 275ms (1428 modules)
+ ✓ Compiled /works in 194ms (1430 modules)
+[0mGET /api/services [36m304[0m 1.900 ms - -[0m
+[0mGET /api/services [36m304[0m 1.966 ms - -[0m
+ GET /portal 200 in 147ms
+ GET / 200 in 106ms
+[0mGET /api/services [36m304[0m 2.708 ms - -[0m
+[0mGET /api/services [36m304[0m 1.966 ms - -[0m
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 549ms (1458 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 629ms
+[0mGET /api/auth/me [36m304[0m 3.185 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.377 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 8.831 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 7.562 ms - -[0m
+[0mGET /api/services [36m304[0m 2.067 ms - -[0m
+[0mGET /api/services [36m304[0m 1.837 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.692 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.243 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 8.636 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 6.377 ms - -[0m
+ ✓ Compiled in 1159ms (2901 modules)
+[0mGET /api/auth/me [36m304[0m 4.252 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.629 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 12.857 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 6.061 ms - -[0m
+ ✓ Compiled in 844ms (2901 modules)
+ GET /portal 200 in 139ms
+ ✓ Compiled in 1202ms (2901 modules)
+ GET /portal 200 in 90ms
+ GET /portal 200 in 102ms
+[0mGET /api/auth/me [36m304[0m 9.881 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 4.089 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 17.153 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.095 ms - -[0m
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 563ms (1454 modules)
+ GET /icon.svg?c213d7debeb2d25f 200 in 642ms
+[0mPOST /api/auth/logout [32m200[0m 0.851 ms - 11[0m
+ GET / 200 in 181ms
+[0mGET /api/services [36m304[0m 6.933 ms - -[0m
+[0mGET /api/services [36m304[0m 1.694 ms - -[0m
+ ✓ Compiled in 1202ms (2909 modules)
+[0mGET /api/auth/me [33m401[0m 0.219 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.150 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.106 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.091 ms - 26[0m
+ GET /login 200 in 102ms
+[0mPOST /api/auth/login [33m401[0m 4.311 ms - 33[0m
+ GET /signup 200 in 59ms
+ GET /portal 200 in 65ms
+[0mPOST /api/auth/signup [33m409[0m 1.829 ms - 38[0m
+[0mPOST /api/auth/signup [33m409[0m 1.640 ms - 38[0m
+ GET /login 200 in 54ms
+[0mPOST /api/auth/login [32m200[0m 268.792 ms - 99[0m
+ GET /portal 200 in 41ms
+[0mGET /api/auth/me [36m304[0m 4.330 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 4.618 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 12.302 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 7.666 ms - -[0m
+ ✓ Compiled /pricing in 401ms (1428 modules)
+[0mGET /api/services [36m304[0m 2.150 ms - -[0m
+[0mGET /api/services [36m304[0m 2.012 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.731 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.906 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 9.768 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 6.647 ms - -[0m
+[0mGET /api/services [36m304[0m 1.839 ms - -[0m
+[0mGET /api/services [36m304[0m 2.129 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.885 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.954 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 11.312 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 7.468 ms - -[0m
+[0mPOST /api/auth/logout [32m200[0m 0.558 ms - 11[0m
+ GET / 200 in 235ms
+[0mGET /api/services [36m304[0m 3.684 ms - -[0m
+[0mGET /api/services [36m304[0m 2.034 ms - -[0m
+[0mGET /api/auth/me [33m401[0m 0.177 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.128 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.142 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.123 ms - 26[0m
+ GET /login 200 in 3ms
+ GET /login 200 in 58ms
+[0mPOST /api/auth/login [33m401[0m 283.491 ms - 33[0m
+[0mPOST /api/auth/login [32m200[0m 263.105 ms - 99[0m
+ GET /portal 200 in 71ms
+[0mGET /api/auth/me [36m304[0m 3.402 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.504 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.143 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 6.498 ms - -[0m
+[0mGET /api/services [36m304[0m 2.434 ms - -[0m
+[0mGET /api/services [36m304[0m 2.130 ms - -[0m
+ ✓ Compiled in 1073ms (2909 modules)
+[0mGET /api/auth/me [36m304[0m 2.722 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.772 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.271 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 7.150 ms - -[0m
+[0mPOST /api/auth/logout [32m200[0m 0.640 ms - 11[0m
+ GET / 200 in 184ms
+[0mGET /api/services [36m304[0m 2.086 ms - -[0m
+[0mGET /api/services [36m304[0m 1.670 ms - -[0m
+ ✓ Compiled in 1577ms (2909 modules)
+[0mGET /api/auth/me [33m401[0m 3.583 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.200 ms - 26[0m
+[0mGET /api/auth/me [33m401[0m 0.132 ms - 26[0m
+[0mGET /api/auth/projects [33m401[0m 0.091 ms - 26[0m
+ GET /login 200 in 26ms
+ GET /login 200 in 53ms
+[0mPOST /api/auth/login [32m200[0m 370.495 ms - 99[0m
+ GET /portal 200 in 36ms
+[0mGET /api/auth/me [36m304[0m 9.580 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.217 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 32.526 ms - -[0m
+[0mGET /api/auth/projects [36m304[0m 10.936 ms - -[0m
+Terminate batch job (Y/N)? 
+Terminate batch job (Y/N)? 
