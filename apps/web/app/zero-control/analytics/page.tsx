@@ -42,7 +42,7 @@ export default function AdminAnalyticsPage() {
 
       // Fetch latest activity log (first 10 items)
       const { data: activityData } = await api.get("/api/admin/activity");
-      setActivities(activityData.slice(0, 10));
+      setActivities(Array.isArray(activityData) ? activityData.slice(0, 10) : []);
     } catch {
       toast.error("Failed to load analytics");
     } finally {

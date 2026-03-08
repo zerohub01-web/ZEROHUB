@@ -8,7 +8,7 @@ export async function createBooking(req: Request, res: Response) {
   const { name, email, phone, businessType, teamSize, monthlyLeads, budgetRange, service, date } = req.body;
 
   const serviceDoc = await ServiceModel.findOne({ title: service, isActive: true });
-  if (!serviceDoc) return res.status(400).json({ message: "Service unavailable" });
+  const priceSnapshot = serviceDoc ? serviceDoc.price : 0;
 
   const booking = await BookingModel.create({
     name,
@@ -19,7 +19,7 @@ export async function createBooking(req: Request, res: Response) {
     monthlyLeads,
     budgetRange,
     service,
-    servicePriceSnapshot: serviceDoc.price,
+    servicePriceSnapshot: priceSnapshot,
     date,
     status: "NEW"
   });

@@ -48,7 +48,7 @@ export default function AdminClientsPage() {
     setIsLoading(true);
     try {
       const { data } = await api.get("/api/admin/bookings");
-      setBookings(data);
+      setBookings(Array.isArray(data) ? data : []);
     } catch {
       toast.error("Failed to load clients/bookings");
     } finally {
