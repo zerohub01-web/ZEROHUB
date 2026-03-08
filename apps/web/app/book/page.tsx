@@ -5,6 +5,7 @@ import axios from "axios";
 import { api } from "../../lib/api";
 import { SiteHeader } from "../../components/SiteHeader";
 import { SiteFooter } from "../../components/SiteFooter";
+import toast from "react-hot-toast";
 
 export default function BookPage() {
   const [sending, setSending] = useState(false);
@@ -33,17 +34,14 @@ export default function BookPage() {
     try {
       await api.post("/api/bookings", payload);
       setDone(true);
-    } catch (err: any) { // Added type annotation for err
+      toast.success("Booking submitted!");
+    } catch (err: any) {
       console.error("Booking Error:", err.response?.data || err.message);
       // @ts-ignore
       window.DEBUG_BOOKING_ERROR = err.response?.data || err.message;
-      const errorMsg = err.response?.data?.message || err.response?.data?.error || "Unable to process booking. Please try again later.";
-      toast.error(errorMsg); // Added toast notification
-      // The original setError logic is replaced by toast.error as per instruction's implied change.
-      // If the user intended to keep setError, the instruction was ambiguous.
-      // For now, I'm following the provided snippet's logic which uses toast.
-      // The trailing part of the instruction's snippet was malformed and seemed to be a partial copy of the original catch block.
-      // I'm interpreting the instruction as replacing the error handling with the new toast-based one.
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || "Unable to process booking.";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setSending(false);
     }
