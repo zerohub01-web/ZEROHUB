@@ -48,7 +48,9 @@ app.get("/", (_req, res) =>
   res.json({
     ok: true,
     service: "zero-api",
-    message: "API is running. Open http://localhost:3000 for the website."
+    version: "1.0.1",
+    updateId: "Build 2026.03.08.1519",
+    message: "API is running. Connected to Build 2026.03.08.1519"
   })
 );
 
