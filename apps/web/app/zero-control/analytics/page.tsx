@@ -76,19 +76,25 @@ export default function AdminAnalyticsPage() {
     <>
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-display text-[var(--ink)]">Analytics Sandbox</h1>
-          <p className="text-sm text-[var(--muted)] mt-1">Review operational volume, user logins, and revenue insights.</p>
+          <h1 className="text-3xl font-display text-[var(--ink)]">Analytics Dashboard</h1>
+          <p className="text-sm text-[var(--muted)] mt-1">Live traffic and conversion metrics for your automation services.</p>
         </div>
-        
-        {/* Filter Toggle */}
-        <div className="flex bg-black/5 p-1 rounded-lg w-fit">
-          {(["today", "week", "month", "all"] as const).map((f) => (
+        <div className="flex bg-white/50 p-1 rounded-lg border border-black/10">
+          {[
+            { id: "hour", label: "Hourly" },
+            { id: "today", label: "Daily" },
+            { id: "week", label: "Weekly" },
+            { id: "month", label: "Monthly" },
+            { id: "all", label: "All" }
+          ].map((f) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 text-sm font-medium rounded-md transition capitalize ${filter === f ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--muted)] hover:text-black"}`}
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${
+                filter === f.id ? "bg-[var(--ink)] text-white shadow-sm" : "text-[var(--muted)] hover:text-black"
+              }`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </div>
