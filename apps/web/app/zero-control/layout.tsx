@@ -1,9 +1,22 @@
+"use client";
+
 import { ZeroLogo } from "../../components/brand/ZeroLogo";
+import { api } from "../../../lib/api";
+import { toast } from "react-hot-toast";
 import { LogOut, Home, Users, BarChart, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 
 export default function ZeroControlAdminLayout({ children }: { children: ReactNode }) {
+  const handleLogout = async () => {
+    try {
+      await api.post("/api/admin/logout");
+      window.location.href = "/";
+    } catch {
+      toast.error("Failed to logout");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--bg-a)] flex">
       {/* Sidebar Navigation */}
@@ -27,9 +40,9 @@ export default function ZeroControlAdminLayout({ children }: { children: ReactNo
           </a>
         </nav>
         <div className="p-4 border-t border-black/10">
-          <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium transition">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium transition">
             <LogOut size={18} /> Exit Admin
-          </Link>
+          </button>
         </div>
       </aside>
 
