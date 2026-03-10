@@ -92,11 +92,18 @@ export default function SignupPage() {
 
     const loadingId = toast.loading("Verifying code...");
     try {
-      await api.post("/api/auth/verify-email", { email: form.email, otp: otpCode });
-      toast.success("Email verified perfectly! Logging you in...", { id: loadingId });
-      setTimeout(() => {
-        window.location.href = "/portal";
-      }, 1000);
+      const res = await api.post<{ needsLogin?: boolean }>("/api/auth/verify-email", { email: form.email, otp: otpCode });
+      if (res.data?.needsLogin) {
+        toast.success("Email verified! Please log in to continue.", { id: loadingId });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1500);
+      } else {
+        toast.success("Email verified! Logging you in...", { id: loadingId });
+        setTimeout(() => {
+          window.location.href = "/portal";
+        }, 1000);
+      }
     } catch (err: any) {
       const msg = err.response?.data?.message ?? "Verification failed";
       setError(msg);
