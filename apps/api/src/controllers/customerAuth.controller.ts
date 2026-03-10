@@ -77,35 +77,39 @@ export async function loginCustomer(req: Request, res: Response) {
 }
 
 export async function loginWithGoogle(req: Request, res: Response) {
-  const { credential } = req.body as { credential: string };
-  if (!googleClient || !env.googleClientId) {
-    return res.status(400).json({ message: "Google auth is not configured" });
+  try {
+    const { credential } = req.body as { credential: string };
+    if (!googleClient || !env.googleClientId) {
+      return res.status(400).json({ message: "Google auth is not configured" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: env.googleClientId });
+    const payload = ticket.getPayload();
+    if (!payload?.email) return res.status(400).json({ message: "Invalid Google token" });
+
+    let customer = await CustomerModel.findOne({ email: payload.email });
+    if (!customer) {
+      customer = await CustomerModel.create({
+        name: payload.name ?? payload.email.split("@")[0],
+        email: payload.email,
+        authProvider: "google",
+        isVerified: true
+      });
+    } else if (!customer.isVerified) {
+      customer.isVerified = true;
+      customer.otpCode = undefined;
+      customer.verificationExpires = undefined;
+      await customer.save();
+    }
+
+    const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
+    setCustomerCookie(res, token);
+
+    return res.json({ customer: { id: customer._id, name: customer.name, email: customer.email } });
+  } catch (err: any) {
+    console.error("Google verify token error:", err);
+    return res.status(400).json({ message: `Google login failed: ${err.message}` });
   }
-
-  const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: env.googleClientId });
-  const payload = ticket.getPayload();
-  if (!payload?.email) return res.status(400).json({ message: "Invalid Google token" });
-
-  let customer = await CustomerModel.findOne({ email: payload.email });
-  if (!customer) {
-    customer = await CustomerModel.create({
-      name: payload.name ?? payload.email.split("@")[0],
-      email: payload.email,
-      authProvider: "google",
-      isVerified: true // Google accounts are auto-verified
-    });
-  } else if (!customer.isVerified) {
-    // If they sign in with google later, verify them automatically
-    customer.isVerified = true;
-    customer.otpCode = undefined;
-    customer.verificationExpires = undefined;
-    await customer.save();
-  }
-
-  const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
-  setCustomerCookie(res, token);
-
-  return res.json({ customer: { id: customer._id, name: customer.name, email: customer.email } });
 }
 
 export async function verifyEmail(req: Request, res: Response) {
