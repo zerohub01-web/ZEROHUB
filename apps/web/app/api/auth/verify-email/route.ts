@@ -43,7 +43,11 @@ export async function POST(req: NextRequest) {
           let backendData;
           try {
             const responseText = await backendRes.text();
-            backendData = JSON.parse(responseText);
+            if (!responseText || responseText.trim() === "") {
+              backendData = {};
+            } else {
+              backendData = JSON.parse(responseText);
+            }
           } catch (parseError) {
             console.error("Failed to parse backend response:", parseError);
             return NextResponse.json({ message: "The server is temporarily unavailable." }, { status: 502 });
@@ -87,7 +91,11 @@ export async function POST(req: NextRequest) {
     let backendData;
     try {
       const responseText = await backendRes.text();
-      backendData = JSON.parse(responseText);
+      if (!responseText || responseText.trim() === "") {
+        backendData = {};
+      } else {
+        backendData = JSON.parse(responseText);
+      }
     } catch (parseError) {
       console.error("Failed to parse backend response (fallback):", parseError);
       return NextResponse.json({ message: "The server is temporarily unavailable." }, { status: 502 });
