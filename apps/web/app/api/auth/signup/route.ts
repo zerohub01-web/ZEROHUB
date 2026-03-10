@@ -21,7 +21,17 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ name, email, password }),
     });
 
-    const backendData = await backendRes.json();
+    let backendData;
+    try {
+      const responseText = await backendRes.text();
+      backendData = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Failed to parse backend response:", parseError);
+      return NextResponse.json(
+        { message: "The server is temporarily unavailable. Please try again later." },
+        { status: 502 }
+      );
+    }
 
     // If the backend already returned requiresVerification, pass it through
     if (backendData.requiresVerification) {

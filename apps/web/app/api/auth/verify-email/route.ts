@@ -40,7 +40,14 @@ export async function POST(req: NextRequest) {
         });
 
         if (backendRes.ok) {
-          const backendData = await backendRes.json();
+          let backendData;
+          try {
+            const responseText = await backendRes.text();
+            backendData = JSON.parse(responseText);
+          } catch (parseError) {
+            console.error("Failed to parse backend response:", parseError);
+            return NextResponse.json({ message: "The server is temporarily unavailable." }, { status: 502 });
+          }
           const response = NextResponse.json(backendData, { status: 200 });
           const setCookie = backendRes.headers.get("set-cookie");
           if (setCookie) {
@@ -77,7 +84,14 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ email, otp }),
     });
 
-    const backendData = await backendRes.json();
+    let backendData;
+    try {
+      const responseText = await backendRes.text();
+      backendData = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Failed to parse backend response (fallback):", parseError);
+      return NextResponse.json({ message: "The server is temporarily unavailable." }, { status: 502 });
+    }
     const response = NextResponse.json(backendData, { status: backendRes.status });
     const setCookie = backendRes.headers.get("set-cookie");
     if (setCookie) {
