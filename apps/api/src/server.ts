@@ -2,7 +2,7 @@ import { app } from "./app.js";
 import { connectDb } from "./config/db.js";
 import { env } from "./config/env.js";
 
-// v2 - OTP email verification
+// v3 - Trigger render restart for OTP email verification
 
 async function bootstrap() {
   await connectDb();
