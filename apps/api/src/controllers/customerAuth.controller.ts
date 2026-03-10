@@ -13,8 +13,8 @@ const googleClient = env.googleClientId ? new OAuth2Client(env.googleClientId) :
 function setCustomerCookie(res: Response, token: string) {
   res.cookie("customer_token", token, {
     httpOnly: true,
-    secure: env.cookieSecure,
-    sameSite: env.cookieSecure ? "none" : "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 }
