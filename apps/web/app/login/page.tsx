@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -40,6 +40,12 @@ export default function LoginPage() {
     try {
       await api.post("/api/auth/login", form);
       const isAdminEmail = form.email.trim().toLowerCase() === adminEmail;
+      
+      if (isAdminEmail) {
+        toast.loading("Upgrading to admin session...", { id: loadingId });
+        await api.post("/api/admin/customer-bridge");
+      }
+
       toast.success("Login successful! Redirecting...", { id: loadingId });
       window.location.href = isAdminEmail ? "/zero-control" : "/portal";
     } catch (err: unknown) {
@@ -72,6 +78,12 @@ export default function LoginPage() {
           try {
             const res = await api.post<{ customer?: { email?: string } }>("/api/auth/google", { credential });
             const isAdminEmail = res.data?.customer?.email?.trim().toLowerCase() === adminEmail;
+            
+            if (isAdminEmail) {
+              toast.loading("Upgrading to admin session...", { id: loadingId });
+              await api.post("/api/admin/customer-bridge");
+            }
+
             toast.success("Signed in with Google", { id: loadingId });
             window.location.href = isAdminEmail ? "/zero-control" : "/portal";
           } catch {
