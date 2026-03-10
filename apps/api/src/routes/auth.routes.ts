@@ -6,7 +6,8 @@ import {
   logoutCustomer,
   meCustomer,
   postClientComment,
-  signupCustomer
+  signupCustomer,
+  verifyEmail
 } from "../controllers/customerAuth.controller.js";
 import { authLimiter } from "../middleware/rateLimit.js";
 import { requireCustomerAuth } from "../middleware/customerAuth.js";
@@ -18,6 +19,7 @@ export const authRouter = Router();
 authRouter.post("/signup", authLimiter, validate(customerSignupSchema), signupCustomer);
 authRouter.post("/login", authLimiter, validate(customerLoginSchema), loginCustomer);
 authRouter.post("/google", authLimiter, validate(customerGoogleSchema), loginWithGoogle);
+authRouter.post("/verify-email", authLimiter, verifyEmail);
 
 authRouter.get("/me", requireCustomerAuth, meCustomer);
 authRouter.post("/logout", requireCustomerAuth, logoutCustomer);

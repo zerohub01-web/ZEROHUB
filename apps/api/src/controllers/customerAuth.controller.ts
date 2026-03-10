@@ -5,6 +5,8 @@ import { BookingModel } from "../models/Booking.js";
 import { signCustomerToken } from "../utils/customerAuth.js";
 import { env } from "../config/env.js";
 import { ensureTimelineForBooking } from "./projectTimeline.controller.js";
+import { sendVerificationEmail } from "../services/email.service.js";
+import crypto from "crypto";
 
 const googleClient = env.googleClientId ? new OAuth2Client(env.googleClientId) : null;
 
@@ -23,11 +25,25 @@ export async function signupCustomer(req: Request, res: Response) {
   const exists = await CustomerModel.findOne({ email });
   if (exists) return res.status(409).json({ message: "Email already registered" });
 
-  const customer = await CustomerModel.create({ name, email, password, authProvider: "local" });
-  const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
-  setCustomerCookie(res, token);
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-  return res.status(201).json({ customer: { id: customer._id, name: customer.name, email: customer.email } });
+  const customer = await CustomerModel.create({ 
+    name, 
+    email, 
+    password, 
+    authProvider: "local",
+    isVerified: false,
+    verificationToken,
+    verificationExpires
+  });
+  
+  await sendVerificationEmail(customer.email, verificationToken);
+
+  return res.status(201).json({ 
+    message: "Verification required",
+    requiresVerification: true 
+  });
 }
 
 export async function loginCustomer(req: Request, res: Response) {
@@ -38,6 +54,18 @@ export async function loginCustomer(req: Request, res: Response) {
 
   const ok = await customer.comparePassword(password);
   if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+  
+  if (!customer.isVerified) {
+    if (customer.verificationExpires && customer.verificationExpires < new Date()) {
+      // Regenerate token if expired
+      customer.verificationToken = crypto.randomBytes(32).toString("hex");
+      customer.verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      await customer.save();
+      await sendVerificationEmail(customer.email, customer.verificationToken);
+      return res.status(403).json({ message: "Verification link expired. A new one has been sent to your email." });
+    }
+    return res.status(403).json({ message: "Please verify your email address to log in" });
+  }
 
   const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
   setCustomerCookie(res, token);
@@ -60,14 +88,44 @@ export async function loginWithGoogle(req: Request, res: Response) {
     customer = await CustomerModel.create({
       name: payload.name ?? payload.email.split("@")[0],
       email: payload.email,
-      authProvider: "google"
+      authProvider: "google",
+      isVerified: true // Google accounts are auto-verified
     });
+  } else if (!customer.isVerified) {
+    // If they sign in with google later, verify them automatically
+    customer.isVerified = true;
+    customer.verificationToken = undefined;
+    customer.verificationExpires = undefined;
+    await customer.save();
   }
 
   const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
   setCustomerCookie(res, token);
 
   return res.json({ customer: { id: customer._id, name: customer.name, email: customer.email } });
+}
+
+export async function verifyEmail(req: Request, res: Response) {
+  const { token } = req.body as { token: string };
+
+  if (!token) return res.status(400).json({ message: "Token is required" });
+
+  const customer = await CustomerModel.findOne({
+    verificationToken: token,
+    verificationExpires: { $gt: new Date() }
+  });
+
+  if (!customer) return res.status(400).json({ message: "Invalid or expired verification link" });
+
+  customer.isVerified = true;
+  customer.verificationToken = undefined;
+  customer.verificationExpires = undefined;
+  await customer.save();
+
+  const sessionToken = signCustomerToken({ customerId: String(customer._id), email: customer.email });
+  setCustomerCookie(res, sessionToken);
+
+  return res.json({ message: "Email verified successfully", customer: { id: customer._id, name: customer.name, email: customer.email } });
 }
 
 export async function meCustomer(req: Request, res: Response) {

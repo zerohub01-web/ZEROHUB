@@ -46,6 +46,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
 
   const strength = useMemo(() => evaluatePassword(form.password), [form.password]);
   const strengthClass = useMemo(
@@ -66,9 +67,14 @@ export default function SignupPage() {
 
     const loadingId = toast.loading("Creating account...");
     try {
-      await api.post("/api/auth/signup", form);
-      toast.success("Account created successfully", { id: loadingId });
-      window.location.href = "/portal";
+      const res = await api.post<{ requiresVerification?: boolean }>("/api/auth/signup", form);
+      if (res.data?.requiresVerification) {
+        toast.success("Account created! Please verify your email.", { id: loadingId });
+        setVerificationSent(true);
+      } else {
+        toast.success("Account created successfully", { id: loadingId });
+        window.location.href = "/portal";
+      }
     } catch (err: any) {
       const msg = err.response?.data?.message ?? "Signup failed";
       setError(msg);
@@ -101,9 +107,24 @@ export default function SignupPage() {
               <div className={styles.logoWrap}>
                 <ZeroLogo variant="inverted" />
               </div>
-
-              <h2 className={styles.title}>Create Account</h2>
-              <p className={styles.subtitle}>Set up your secure ZERO portal access in under a minute.</p>
+              
+              {verificationSent ? (
+                <>
+                  <h2 className={styles.title}>Check Your Email</h2>
+                  <p className={styles.subtitle}>
+                    We've sent a verification link to <strong>{form.email}</strong>.<br />
+                    Please click the link to verify your account and sign in.
+                  </p>
+                  <div style={{ marginTop: "2rem", textAlign: "center" }}>
+                    <p className={styles.metaText}>
+                      Didn't receive the email? Check your spam folder.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2 className={styles.title}>Create Account</h2>
+                  <p className={styles.subtitle}>Set up your secure ZERO portal access in under a minute.</p>
 
               <form onSubmit={onSubmit} className={styles.form}>
                 <div>
@@ -179,6 +200,8 @@ export default function SignupPage() {
               <p className={styles.bottomText}>
                 Already have an account? <a href="/login">Login</a>
               </p>
+            </>
+            )}
             </div>
           </section>
         </div>

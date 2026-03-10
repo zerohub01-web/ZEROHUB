@@ -66,3 +66,14 @@ export async function sendMilestoneUpdateEmail(params: {
     `<p>Hi ${params.customerName}, milestone <strong>${params.milestoneTitle}</strong> is now <strong>${params.status}</strong>.</p>`
   );
 }
+
+export async function sendVerificationEmail(to: string, token: string) {
+  const verifyUrl = `${env.clientOrigin}/verify-email?token=${token}`;
+  await sendEmail(
+    to,
+    "Verify your ZERO account",
+    `<p>Welcome to ZERO! Please verify your email address by clicking the link below:</p>
+     <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+     <p>This link will expire in 24 hours.</p>`
+  );
+}
