@@ -4,8 +4,20 @@ import { env } from "../config/env.js";
 const resend = env.resendApiKey ? new Resend(env.resendApiKey) : null;
 
 export async function sendEmail(to: string, subject: string, html: string) {
-  if (!resend) return;
-  await resend.emails.send({ from: env.emailFrom, to, subject, html });
+  if (!resend) {
+    console.error("Email Error: Resend is not configured (missing API key)");
+    return;
+  }
+  try {
+    const result = await resend.emails.send({ from: env.emailFrom, to, subject, html });
+    if (result.error) {
+      console.error(`Email delivery failed to ${to}:`, result.error);
+    } else {
+      console.log(`Email sent successfully to ${to}. ID: ${result.data?.id}`);
+    }
+  } catch (err) {
+    console.error(`Email service crash while sending to ${to}:`, err);
+  }
 }
 
 export async function sendBookingCreatedEmails(params: {

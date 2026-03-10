@@ -26,21 +26,18 @@ export async function createBooking(req: Request, res: Response) {
   });
 
   // Async tasks shouldn't block the primary booking success response
-  try {
-    await sendBookingCreatedEmails({
+  Promise.all([
+    sendBookingCreatedEmails({
       customerEmail: booking.email,
       customerName: booking.name,
       service: booking.service,
       date: new Date(booking.date).toDateString()
-    }).catch(err => console.error("Email Service Error:", err));
-
-    await logActivity("BOOKING_CREATED", booking.email, { 
+    }),
+    logActivity("BOOKING_CREATED", booking.email, { 
       bookingId: String(booking._id),
       clientName: booking.name 
-    }).catch(err => console.error("Activity Logging Error:", err));
-  } catch (secondaryErr) {
-    console.error("Secondary tasks failed but booking was saved:", secondaryErr);
-  }
+    })
+  ]).catch(err => console.error("Secondary tasks failed:", err));
 
   return res.status(201).json({ booking, message: "Booking created successfully" });
 }

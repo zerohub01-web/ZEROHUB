@@ -38,7 +38,7 @@ export default function AdminClientsPage() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [commentInput, setCommentInput] = useState("");
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
@@ -63,7 +63,8 @@ export default function AdminClientsPage() {
     try {
       // First, get all projects/timelines to find the matching one
       const { data } = await api.get("/api/admin/projects");
-      const project = data.find((p: any) => p.bookingId === booking._id);
+      // Fix: MongoDB ObjectId vs string comparison — use .toString() on both sides
+      const project = data.find((p: any) => String(p.bookingId) === String(booking._id));
       if (project) {
         setMilestones(project.milestones || []);
       } else {
@@ -93,14 +94,15 @@ export default function AdminClientsPage() {
   };
 
   const postComment = async (milestoneKey: string) => {
-    if (!selectedBooking || !commentInput.trim()) return;
+    const commentText = commentInputs[milestoneKey]?.trim();
+    if (!selectedBooking || !commentText) return;
     setIsUpdating(true);
     try {
       await api.patch(`/api/admin/projects/${selectedBooking._id}/milestones/${milestoneKey}`, {
-        comment: commentInput
+        comment: commentText
       });
       toast.success("Comment sent to client");
-      setCommentInput("");
+      setCommentInputs(prev => ({ ...prev, [milestoneKey]: "" }));
       // Refresh the timeline data
       loadBookingDetails(selectedBooking);
     } catch {
@@ -231,15 +233,15 @@ export default function AdminClientsPage() {
                       type="text" 
                       placeholder={`Send instruction or update to client regarding ${m.title}...`}
                       className="flex-1 text-sm px-3 py-2 border rounded-md focus:outline-none focus:border-[var(--ink)]"
-                      value={commentInput}
-                      onChange={(e) => setCommentInput(e.target.value)}
+                      value={commentInputs[m.key] ?? ""}
+                      onChange={(e) => setCommentInputs(prev => ({ ...prev, [m.key]: e.target.value }))}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') postComment(m.key);
                       }}
                     />
                     <button 
                       onClick={() => postComment(m.key)}
-                      disabled={!commentInput.trim() || isUpdating}
+                      disabled={!commentInputs[m.key]?.trim() || isUpdating}
                       className="px-4 bg-[var(--ink)] text-white rounded-md hover:bg-black/80 transition disabled:opacity-50 text-sm flex items-center justify-center"
                     >
                       <MessageSquare size={14} />

@@ -96,10 +96,39 @@ export async function getCustomerProjects(req: Request, res: Response) {
         date: b.date,
         value: b.servicePriceSnapshot,
         businessType: b.businessType,
-        milestones: timeline?.milestones ? JSON.parse(JSON.stringify(timeline.milestones)) : []
+        milestones: timeline ? timeline.toObject().milestones : []
       };
     })
   );
 
   return res.json({ projects });
+}
+
+export async function postClientComment(req: Request, res: Response) {
+  if (!req.customer) return res.status(401).json({ message: "Unauthorized" });
+
+  const { bookingId, milestoneKey } = req.params;
+  const { comment } = req.body as { comment?: string };
+
+  if (!comment?.trim()) return res.status(400).json({ message: "Comment is required" });
+
+  // Import here to avoid circular deps
+  const { ensureTimelineForBooking } = await import("./projectTimeline.controller.js");
+  const timeline = await ensureTimelineForBooking(bookingId);
+  if (!timeline) return res.status(404).json({ message: "Timeline not found" });
+
+  // Ensure the timeline belongs to this customer
+  if (timeline.customerEmail.toLowerCase() !== req.customer.email.toLowerCase()) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  const milestone = timeline.milestones.find((m) => m.key === milestoneKey);
+  if (!milestone) return res.status(404).json({ message: "Milestone not found" });
+
+  milestone.comments.push({ text: comment.trim(), by: "client", at: new Date() });
+  milestone.updatedAt = new Date();
+  timeline.markModified("milestones");
+  await timeline.save();
+
+  return res.json({ ok: true });
 }

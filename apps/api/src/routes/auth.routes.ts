@@ -1,10 +1,11 @@
-﻿import { Router } from "express";
+import { Router } from "express";
 import {
   getCustomerProjects,
   loginCustomer,
   loginWithGoogle,
   logoutCustomer,
   meCustomer,
+  postClientComment,
   signupCustomer
 } from "../controllers/customerAuth.controller.js";
 import { authLimiter } from "../middleware/rateLimit.js";
@@ -21,3 +22,5 @@ authRouter.post("/google", authLimiter, validate(customerGoogleSchema), loginWit
 authRouter.get("/me", requireCustomerAuth, meCustomer);
 authRouter.post("/logout", requireCustomerAuth, logoutCustomer);
 authRouter.get("/projects", requireCustomerAuth, getCustomerProjects);
+authRouter.post("/projects/:bookingId/milestones/:milestoneKey/comment", requireCustomerAuth, postClientComment);
+

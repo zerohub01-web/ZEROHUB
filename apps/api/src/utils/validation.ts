@@ -47,12 +47,12 @@ export const updateBookingSchema = z.object({
   body: z.object({
     status: z.enum(["NEW", "CONFIRMED", "COMPLETED"])
   }),
-  params: z.object({ id: z.string().min(1) })
+  params: z.object({ id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid Booking ID format") })
 });
 
 export const updateMilestoneSchema = z.object({
   params: z.object({
-    bookingId: z.string().min(1),
+    bookingId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid Booking ID format"),
     milestoneKey: z.enum(["planned", "in_progress", "delivered"])
   }),
   body: z.object({

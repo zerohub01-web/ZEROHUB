@@ -1,4 +1,4 @@
-﻿import { SiteHeader } from "../../components/SiteHeader";
+import { SiteHeader } from "../../components/SiteHeader";
 import { SiteFooter } from "../../components/SiteFooter";
 
 const plans = [
@@ -69,5 +69,3 @@ export default function MaintenancePage() {
     </main>
   );
 }
-
-

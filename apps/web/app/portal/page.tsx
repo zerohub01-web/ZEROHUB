@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { api } from "../../lib/api";
 import { toast } from "react-hot-toast";
-import { FolderKanban, FolderOpen, LogOut, Mail, ShieldCheck, UserRound } from "lucide-react";
+import { FolderKanban, FolderOpen, LogOut, Mail, MessageSquare, RefreshCw, ShieldCheck, UserRound } from "lucide-react";
 import { SiteHeader } from "../../components/SiteHeader";
 import { CustomerProfile, CustomerProject } from "../../types/customer";
 
@@ -21,18 +21,36 @@ export default function PortalPage() {
   const [customer, setCustomer] = useState<CustomerProfile | null>(null);
   const [projects, setProjects] = useState<CustomerProject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+  const [posting, setPosting] = useState<string | null>(null);
+
+  const fetchData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    else setRefreshing(true);
+    try {
+      const [me, data] = await Promise.all([
+        api.get("/api/auth/me"),
+        api.get("/api/auth/projects")
+      ]);
+      setCustomer(me.data);
+      setProjects(data.data.projects ?? []);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        window.location.href = "/login";
+      } else {
+        toast.error("Failed to load project data.");
+        console.error("Portal Data Fetch Error:", err);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    Promise.all([api.get("/api/auth/me"), api.get("/api/auth/projects")])
-      .then(([me, data]) => {
-        setCustomer(me.data);
-        setProjects(data.data.projects ?? []);
-        setLoading(false);
-      })
-      .catch(() => {
-        window.location.href = "/login";
-      });
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
   async function logout() {
     const loadingId = toast.loading("Logging out...");
@@ -45,6 +63,23 @@ export default function PortalPage() {
     }
   }
 
+  async function postComment(bookingId: string, milestoneKey: string) {
+    const text = commentInputs[`${bookingId}-${milestoneKey}`]?.trim();
+    if (!text) return;
+    setPosting(`${bookingId}-${milestoneKey}`);
+    try {
+      await api.post(`/api/auth/projects/${bookingId}/milestones/${milestoneKey}/comment`, { comment: text });
+      toast.success("Message sent!");
+      setCommentInputs(prev => ({ ...prev, [`${bookingId}-${milestoneKey}`]: "" }));
+      // Silently refresh to show new comment
+      fetchData(true);
+    } catch {
+      toast.error("Failed to send message.");
+    } finally {
+      setPosting(null);
+    }
+  }
+
   return (
     <main className="min-h-screen relative overflow-hidden">
       <div className="orb orb-a" />
@@ -53,9 +88,19 @@ export default function PortalPage() {
       <SiteHeader portalMode />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 py-6 space-y-5">
-        <section className="soft-card p-6">
-          <h1 className="text-4xl font-display text-[var(--ink)]">Project Tracker</h1>
-          <p className="text-[var(--muted)] mt-2">Track your milestones, files, and comments in one timeline.</p>
+        <section className="soft-card p-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-display text-[var(--ink)]">Project Tracker</h1>
+            <p className="text-[var(--muted)] mt-2">Track your milestones, admin messages, and project files.</p>
+          </div>
+          <button
+            onClick={() => fetchData(true)}
+            disabled={refreshing}
+            className="flex items-center gap-2 text-sm text-[var(--muted)] hover:text-black transition"
+          >
+            <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+            Refresh
+          </button>
         </section>
 
         <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start">
@@ -132,8 +177,8 @@ export default function PortalPage() {
               </article>
             ) : projects.length ? (
               projects.map((project) => (
-                <article key={project.id} className="soft-card p-5 hover-lift transition-all">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                <article key={project.id} className="soft-card p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3 border-b border-black/10 pb-4 mb-5">
                     <div>
                       <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">{project.businessType}</p>
                       <h2 className="text-2xl font-display text-[var(--ink)] mt-2">{project.title}</h2>
@@ -143,18 +188,25 @@ export default function PortalPage() {
                     </div>
                   </div>
 
-                  <div className="mt-5 grid md:grid-cols-3 gap-3">
+                  <div className="space-y-6">
                     {project.milestones?.map((milestone) => (
-                      <div key={milestone.key} className="rounded-xl border border-black/10 bg-white/65 hover:bg-white transition p-4">
-                        <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">{milestone.title}</p>
-                        <p className={`text-sm font-semibold mt-1 ${milestoneTone(milestone.status)}`}>{milestone.status}</p>
-                        <p className="text-xs text-[var(--muted)] mt-1">Updated: {new Date(milestone.updatedAt).toLocaleDateString()}</p>
+                      <div key={milestone.key} className="rounded-xl border border-black/10 bg-white/65 p-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-sm font-semibold text-[var(--ink)] uppercase tracking-[0.12em]">{milestone.title}</p>
+                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                            milestone.status === "DONE"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-amber-100 text-amber-700"
+                          }`}>{milestone.status}</span>
+                        </div>
+                        <p className="text-xs text-[var(--muted)] mb-4">Last updated: {new Date(milestone.updatedAt).toLocaleString()}</p>
 
-                        <div className="mt-3">
-                          <p className="text-xs text-[var(--muted)] uppercase tracking-[0.12em]">Files</p>
-                          <div className="mt-1 space-y-1">
-                            {milestone.files.length ? (
-                              milestone.files.map((file) => (
+                        {/* Files */}
+                        {milestone.files.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-xs text-[var(--muted)] uppercase tracking-[0.12em] mb-1">Files</p>
+                            <div className="space-y-1">
+                              {milestone.files.map((file) => (
                                 <a
                                   key={file}
                                   href={file}
@@ -164,26 +216,56 @@ export default function PortalPage() {
                                 >
                                   {file}
                                 </a>
-                              ))
-                            ) : (
-                              <p className="text-xs text-[var(--muted)]">No files</p>
-                            )}
+                              ))}
+                            </div>
                           </div>
+                        )}
+
+                        {/* Chat Thread */}
+                        <div className="bg-gray-50/70 rounded-lg border p-3 space-y-2 max-h-56 overflow-y-auto mb-3">
+                          {milestone.comments.length === 0 ? (
+                            <p className="text-xs text-[var(--muted)] italic text-center py-2">No messages yet. Admin will provide updates here.</p>
+                          ) : (
+                            milestone.comments.map((c, idx) => (
+                              <div
+                                key={`${c.by}-${idx}`}
+                                className={`text-sm p-3 rounded-lg max-w-[85%] ${
+                                  c.by === "client"
+                                    ? "ml-auto bg-[var(--ink)] text-white"
+                                    : "bg-white border border-black/10 text-[var(--ink)]"
+                                }`}
+                              >
+                                <p className="text-[10px] opacity-60 mb-1 uppercase font-semibold">
+                                  {c.by === "client" ? "You" : "ZeroOps Team"} · {new Date(c.at).toLocaleString()}
+                                </p>
+                                <p>{c.text}</p>
+                              </div>
+                            ))
+                          )}
                         </div>
 
-                        <div className="mt-3">
-                          <p className="text-xs text-[var(--muted)] uppercase tracking-[0.12em]">Comments</p>
-                          <div className="mt-1 space-y-1">
-                            {milestone.comments.length ? (
-                              milestone.comments.map((c, idx) => (
-                                <p key={`${c.by}-${idx}`} className="text-xs text-[var(--ink)]">
-                                  {c.text} <span className="text-[var(--muted)]">- {c.by}</span>
-                                </p>
-                              ))
-                            ) : (
-                              <p className="text-xs text-[var(--muted)]">No comments</p>
-                            )}
-                          </div>
+                        {/* Client Reply */}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Reply to admin..."
+                            className="flex-1 text-sm px-3 py-2 border rounded-md focus:outline-none focus:border-[var(--ink)]"
+                            value={commentInputs[`${project.id}-${milestone.key}`] ?? ""}
+                            onChange={(e) => setCommentInputs(prev => ({
+                              ...prev,
+                              [`${project.id}-${milestone.key}`]: e.target.value
+                            }))}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") postComment(project.id, milestone.key);
+                            }}
+                          />
+                          <button
+                            onClick={() => postComment(project.id, milestone.key)}
+                            disabled={!commentInputs[`${project.id}-${milestone.key}`]?.trim() || posting === `${project.id}-${milestone.key}`}
+                            className="px-4 bg-[var(--ink)] text-white rounded-md hover:bg-black/80 transition disabled:opacity-50 text-sm"
+                          >
+                            <MessageSquare size={14} />
+                          </button>
                         </div>
                       </div>
                     ))}

@@ -1,4 +1,4 @@
-﻿import { ZeroLogo } from "./brand/ZeroLogo";
+import { ZeroLogo } from "./brand/ZeroLogo";
 
 const socials = [
   { name: "Instagram", href: "https://www.instagram.com/_zero_ops_", label: "IG" },
@@ -24,7 +24,6 @@ export function SiteFooter() {
             <p className="mt-3 text-sm text-[var(--ink)]">
               ZERO Business Automation Systems
               <br />
-              
               Hillside Meadows 56, MS Palaya, Vidhyaranyapura Post, Adityanagar, Vidyaranyapura, Bengaluru, Karnataka 560097
             </p>
           </div>
