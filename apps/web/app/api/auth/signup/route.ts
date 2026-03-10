@@ -94,8 +94,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Return a signed token containing the OTP state — NO cookies needed
-    // The client stores this and sends it back with the verify request
-    const token = Buffer.from(JSON.stringify({ email, otp, otpExpires })).toString("base64");
+    const token = btoa(JSON.stringify({ email, otp, otpExpires }));
 
     return NextResponse.json(
       { message: "Verification required", requiresVerification: true, _t: token },

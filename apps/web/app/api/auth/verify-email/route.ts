@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     // --- Vercel-layer stateless token validation ---
     if (_t) {
       try {
-        const payload = JSON.parse(Buffer.from(_t, "base64").toString("utf-8"));
+        const payload = JSON.parse(atob(_t));
 
         if (Date.now() > payload.otpExpires) {
           return NextResponse.json(
