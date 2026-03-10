@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ message: "Invalid verification code" }, { status: 400 });
         }
 
-        if (payload.otp !== otp.trim()) {
+        const cleanOtp = otp.toString().replace(/\D/g, "");
+        if (payload.otp !== cleanOtp) {
           return NextResponse.json({ message: "Invalid verification code" }, { status: 400 });
         }
 
