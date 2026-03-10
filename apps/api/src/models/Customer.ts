@@ -7,7 +7,7 @@ export interface CustomerDocument extends mongoose.Document {
   password?: string;
   authProvider: "local" | "google";
   isVerified: boolean;
-  verificationToken?: string;
+  otpCode?: string;
   verificationExpires?: Date;
   comparePassword(password: string): Promise<boolean>;
 }
@@ -19,7 +19,7 @@ const customerSchema = new Schema<CustomerDocument>(
     password: { type: String },
     authProvider: { type: String, enum: ["local", "google"], default: "local" },
     isVerified: { type: Boolean, default: false },
-    verificationToken: { type: String },
+    otpCode: { type: String },
     verificationExpires: { type: Date }
   },
   { timestamps: true }

@@ -43,6 +43,7 @@ function evaluatePassword(password: string): PasswordStrength {
 
 export default function SignupPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [otpCode, setOtpCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -84,6 +85,27 @@ export default function SignupPage() {
     }
   }
 
+  async function onVerify(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSending(true);
+
+    const loadingId = toast.loading("Verifying code...");
+    try {
+      await api.post("/api/auth/verify-email", { email: form.email, otp: otpCode });
+      toast.success("Email verified perfectly! Logging you in...", { id: loadingId });
+      setTimeout(() => {
+        window.location.href = "/portal";
+      }, 1000);
+    } catch (err: any) {
+      const msg = err.response?.data?.message ?? "Verification failed";
+      setError(msg);
+      toast.error(msg, { id: loadingId });
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <SiteHeader />
@@ -110,11 +132,32 @@ export default function SignupPage() {
               
               {verificationSent ? (
                 <>
-                  <h2 className={styles.title}>Check Your Email</h2>
+                  <h2 className={styles.title}>Enter Verification Code</h2>
                   <p className={styles.subtitle}>
-                    We've sent a verification link to <strong>{form.email}</strong>.<br />
-                    Please click the link to verify your account and sign in.
+                    We've sent a 6-digit verification code to <strong>{form.email}</strong>.
                   </p>
+                  
+                  <form onSubmit={onVerify} className={styles.form} style={{ marginTop: "1rem" }}>
+                    <div>
+                      <label className={styles.label} htmlFor="otp">6-Digit Code</label>
+                      <input
+                        id="otp"
+                        className={styles.input}
+                        placeholder="123456"
+                        type="text"
+                        maxLength={6}
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                        style={{ textAlign: "center", fontSize: "1.5rem", letterSpacing: "0.25em" }}
+                        required
+                      />
+                    </div>
+                    {error ? <p className={`${styles.metaText} ${styles.metaError}`}>{error}</p> : null}
+                    <button className={styles.primaryButton} disabled={sending || otpCode.length !== 6}>
+                      {sending ? "Verifying..." : "Verify & Sign In"}
+                    </button>
+                  </form>
+
                   <div style={{ marginTop: "2rem", textAlign: "center" }}>
                     <p className={styles.metaText}>
                       Didn't receive the email? Check your spam folder.

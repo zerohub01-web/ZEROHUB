@@ -67,13 +67,17 @@ export async function sendMilestoneUpdateEmail(params: {
   );
 }
 
-export async function sendVerificationEmail(to: string, token: string) {
-  const verifyUrl = `${env.clientOrigin}/verify-email?token=${token}`;
+export async function sendVerificationEmail(to: string, otpCode: string) {
   await sendEmail(
     to,
     "Verify your ZERO account",
-    `<p>Welcome to ZERO! Please verify your email address by clicking the link below:</p>
-     <p><a href="${verifyUrl}">${verifyUrl}</a></p>
-     <p>This link will expire in 24 hours.</p>`
+    `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+       <h1 style="color: #333;">Welcome to ZERO!</h1>
+       <p style="font-size: 16px; color: #555;">Please enter the following 6-digit code to verify your email address and securely log in.</p>
+       <div style="background-color: #f4f4f4; padding: 20px; border-radius: 8px; margin: 30px 0;">
+         <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #000;">${otpCode}</span>
+       </div>
+       <p style="font-size: 14px; color: #888;">This code will expire in 20 minutes.</p>
+     </div>`
   );
 }

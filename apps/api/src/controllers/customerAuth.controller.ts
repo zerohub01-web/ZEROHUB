@@ -25,8 +25,8 @@ export async function signupCustomer(req: Request, res: Response) {
   const exists = await CustomerModel.findOne({ email });
   if (exists) return res.status(409).json({ message: "Email already registered" });
 
-  const verificationToken = crypto.randomBytes(32).toString("hex");
-  const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+  const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const verificationExpires = new Date(Date.now() + 20 * 60 * 1000); // 20 mins
 
   const customer = await CustomerModel.create({ 
     name, 
@@ -34,11 +34,11 @@ export async function signupCustomer(req: Request, res: Response) {
     password, 
     authProvider: "local",
     isVerified: false,
-    verificationToken,
+    otpCode,
     verificationExpires
   });
   
-  await sendVerificationEmail(customer.email, verificationToken);
+  await sendVerificationEmail(customer.email, otpCode);
 
   return res.status(201).json({ 
     message: "Verification required",
@@ -58,13 +58,16 @@ export async function loginCustomer(req: Request, res: Response) {
   if (!customer.isVerified) {
     if (customer.verificationExpires && customer.verificationExpires < new Date()) {
       // Regenerate token if expired
-      customer.verificationToken = crypto.randomBytes(32).toString("hex");
-      customer.verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      customer.otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      customer.verificationExpires = new Date(Date.now() + 20 * 60 * 1000);
       await customer.save();
-      await sendVerificationEmail(customer.email, customer.verificationToken);
-      return res.status(403).json({ message: "Verification link expired. A new one has been sent to your email." });
+      await sendVerificationEmail(customer.email, customer.otpCode);
+      return res.status(403).json({ message: "Verification link expired. A new code has been sent to your email." });
     }
-    return res.status(403).json({ message: "Please verify your email address to log in" });
+    return res.status(403).json({ 
+      message: "Please enter your 6-digit confirmation code to complete setup.",
+      requiresVerification: true
+    });
   }
 
   const token = signCustomerToken({ customerId: String(customer._id), email: customer.email });
@@ -94,7 +97,7 @@ export async function loginWithGoogle(req: Request, res: Response) {
   } else if (!customer.isVerified) {
     // If they sign in with google later, verify them automatically
     customer.isVerified = true;
-    customer.verificationToken = undefined;
+    customer.otpCode = undefined;
     customer.verificationExpires = undefined;
     await customer.save();
   }
@@ -106,19 +109,20 @@ export async function loginWithGoogle(req: Request, res: Response) {
 }
 
 export async function verifyEmail(req: Request, res: Response) {
-  const { token } = req.body as { token: string };
+  const { email, otp } = req.body as { email: string; otp: string };
 
-  if (!token) return res.status(400).json({ message: "Token is required" });
+  if (!email || !otp) return res.status(400).json({ message: "Email and code are required" });
 
   const customer = await CustomerModel.findOne({
-    verificationToken: token,
+    email: email.toLowerCase(),
+    otpCode: otp,
     verificationExpires: { $gt: new Date() }
   });
 
-  if (!customer) return res.status(400).json({ message: "Invalid or expired verification link" });
+  if (!customer) return res.status(400).json({ message: "Invalid or expired verification code" });
 
   customer.isVerified = true;
-  customer.verificationToken = undefined;
+  customer.otpCode = undefined;
   customer.verificationExpires = undefined;
   await customer.save();
 
