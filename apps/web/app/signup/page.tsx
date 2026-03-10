@@ -44,6 +44,7 @@ function evaluatePassword(password: string): PasswordStrength {
 export default function SignupPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [otpCode, setOtpCode] = useState("");
+  const [otpToken, setOtpToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -68,9 +69,10 @@ export default function SignupPage() {
 
     const loadingId = toast.loading("Creating account...");
     try {
-      const res = await api.post<{ requiresVerification?: boolean }>("/api/auth/signup", form);
+      const res = await api.post<{ requiresVerification?: boolean; _t?: string }>("/api/auth/signup", form);
       if (res.data?.requiresVerification) {
         toast.success("Account created! Please verify your email.", { id: loadingId });
+        setOtpToken(res.data._t ?? null);
         setVerificationSent(true);
       } else {
         toast.success("Account created successfully", { id: loadingId });
@@ -92,7 +94,7 @@ export default function SignupPage() {
 
     const loadingId = toast.loading("Verifying code...");
     try {
-      const res = await api.post<{ needsLogin?: boolean }>("/api/auth/verify-email", { email: form.email, otp: otpCode });
+      const res = await api.post<{ needsLogin?: boolean }>("/api/auth/verify-email", { email: form.email, otp: otpCode, _t: otpToken });
       if (res.data?.needsLogin) {
         toast.success("Email verified! Please log in to continue.", { id: loadingId });
         setTimeout(() => {
