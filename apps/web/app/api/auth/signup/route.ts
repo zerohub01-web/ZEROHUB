@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// build: 2026-03-10T21:27 - OTP email verification v3
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_ZAkMN4R2_4SGRBsyeuYyWGDgKMQ3u4f1z";
 const EMAIL_FROM = process.env.EMAIL_FROM || "ZERO <onboarding@resend.dev>";
 
