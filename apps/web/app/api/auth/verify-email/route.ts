@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         }
 
         // OTP is valid! Try to mark as verified on the backend
-        const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+        const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "https://zero-api-m0an.onrender.com";
         const backendRes = await fetch(`${apiBase}/api/auth/verify-email`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Fallback: forward to backend directly ---
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "https://zero-api-m0an.onrender.com";
     const backendRes = await fetch(`${apiBase}/api/auth/verify-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

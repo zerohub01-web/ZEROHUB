@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Forward signup to the backend
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "https://zero-api-m0an.onrender.com";
     const backendRes = await fetch(`${apiBase}/api/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
