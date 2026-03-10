@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// build: 2026-03-10T21:27 - OTP email verification v3
+// build: 2026-03-10T21:44 - professional email templates v4
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_ZAkMN4R2_4SGRBsyeuYyWGDgKMQ3u4f1z";
-const EMAIL_FROM = process.env.EMAIL_FROM || "ZERO <onboarding@resend.dev>";
+const FROM = "ZERO <noreply@noreply.zeroops.in>";
+
 
 // In-memory OTP store (lasts as long as the serverless function is warm)
 // We sign + store in a response cookie instead for persistence
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: EMAIL_FROM,
+          from: FROM,
           to: email,
           subject: "Verify your ZERO account",
           html: `

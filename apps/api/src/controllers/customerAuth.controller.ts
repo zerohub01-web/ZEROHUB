@@ -5,7 +5,7 @@ import { BookingModel } from "../models/Booking.js";
 import { signCustomerToken } from "../utils/customerAuth.js";
 import { env } from "../config/env.js";
 import { ensureTimelineForBooking } from "./projectTimeline.controller.js";
-import { sendVerificationEmail } from "../services/email.service.js";
+import { sendVerificationEmail, sendWelcomeEmail } from "../services/email.service.js";
 import crypto from "crypto";
 
 const googleClient = env.googleClientId ? new OAuth2Client(env.googleClientId) : null;
@@ -125,6 +125,9 @@ export async function verifyEmail(req: Request, res: Response) {
   customer.otpCode = undefined;
   customer.verificationExpires = undefined;
   await customer.save();
+
+  // Send welcome email
+  sendWelcomeEmail(customer.email, customer.name).catch(console.error);
 
   const sessionToken = signCustomerToken({ customerId: String(customer._id), email: customer.email });
   setCustomerCookie(res, sessionToken);
