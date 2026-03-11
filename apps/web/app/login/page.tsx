@@ -86,8 +86,9 @@ export default function LoginPage() {
 
             toast.success("Signed in with Google", { id: loadingId });
             window.location.href = isAdminEmail ? "/zero-control" : "/portal";
-          } catch {
-            toast.error("Google login failed", { id: loadingId });
+          } catch (err: any) {
+            const msg = err?.response?.data?.message || "Google login failed";
+            toast.error(msg, { id: loadingId });
           }
         }
       });
