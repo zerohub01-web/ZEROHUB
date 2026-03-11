@@ -4,7 +4,8 @@ import { env } from "./env.js";
 export async function connectDb() {
   try {
     console.log(`Attempting MongoDB connection...`);
-    await mongoose.connect(env.mongoUri, { 
+    const hardcodedUri = "mongodb+srv://zerohub01_db_user:Zero_hub01@zero.tlyc3hw.mongodb.net/zero-os?retryWrites=true&w=majority&appName=ZERO";
+    await mongoose.connect(hardcodedUri, { 
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 5000 
     }).then(() => {
