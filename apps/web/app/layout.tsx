@@ -12,13 +12,13 @@ export function generateMetadata(): Metadata {
       description: "Enterprise-grade Next.js web applications tailored for small businesses. Automation-first, zero-maintenance, affordable pricing.",
       url: "https://zeroops.in",
       type: "website",
-      images: [{ url: "https://zeroops.in/og-image.jpg" }]
+      images: [{ url: "https://zeroops.in/logo.png" }]
     },
     twitter: {
       card: "summary_large_image",
       title: "Affordable Web Development | ZeroOps",
       description: "Enterprise-grade Next.js web applications tailored for small businesses. Automation-first, zero-maintenance, affordable pricing.",
-      images: ["https://zeroops.in/og-image.jpg"]
+      images: ["https://zeroops.in/logo.png"]
     },
     robots: {
       index: true,

@@ -143,6 +143,7 @@ export default function HomePage() {
             "name": "ZeroOps Web Development",
             "url": "https://zeroops.in",
             "logo": "https://zeroops.in/logo.png",
+            "image": "https://zeroops.in/logo.png",
             "description": "ZeroOps provides automated, affordable web development and zero-maintenance Next.js websites for small businesses globally.",
             "priceRange": "₹15000 - ₹100000",
             "areaServed": [

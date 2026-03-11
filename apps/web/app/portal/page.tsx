@@ -31,7 +31,7 @@ export default function PortalPage() {
     try {
       const [me, data] = await Promise.all([
         api.get("/api/auth/me"),
-        api.get("/api/projects")
+        api.get("/api/auth/projects")
       ]);
       setCustomer(me.data);
       setProjects(data.data.projects ?? []);

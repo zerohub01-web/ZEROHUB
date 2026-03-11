@@ -1,15 +1,42 @@
 import { SiteHeader } from "../../components/SiteHeader";
 import { SiteFooter } from "../../components/SiteFooter";
 
-async function getWorks() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+export const dynamic = "force-dynamic";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://zero-api-m0an.onrender.com";
+const TIMEOUT_MS = 8000;
+
+async function safeFetch(url: string) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    const res = await fetch(`${baseUrl}/api/public/work`, { next: { revalidate: 0 } });
+    const res = await fetch(url, { cache: "no-store", signal: controller.signal });
     if (!res.ok) return [];
-    return res.json();
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data.projects ?? []);
   } catch {
     return [];
+  } finally {
+    clearTimeout(timeout);
   }
+}
+
+async function getWorks() {
+  const [publicWorks, adminProjects] = await Promise.all([
+    safeFetch(`${API_BASE}/api/public/work`),
+    safeFetch(`${API_BASE}/api/projects`),
+  ]);
+  // Merge by _id to avoid duplicates
+  const seen = new Set();
+  const merged: any[] = [];
+  for (const item of [...publicWorks, ...adminProjects]) {
+    const key = item._id || item.id || item.title;
+    if (key && !seen.has(key)) {
+      seen.add(key);
+      merged.push(item);
+    }
+  }
+  return merged;
 }
 
 export default async function WorksPage() {
@@ -24,7 +51,7 @@ export default async function WorksPage() {
         <h1 className="text-5xl md:text-6xl font-display text-[var(--ink)] mt-3">Case results from real delivery.</h1>
         <div className="grid md:grid-cols-3 gap-6 mt-8">
           {items.map((w: any) => (
-            <article key={w._id} className="soft-card relative overflow-hidden group">
+            <article key={w._id || w.id || w.title} className="soft-card relative overflow-hidden group">
               {w.coverImage && (
                 <div className="h-40 w-full bg-black/5 relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -47,3 +74,4 @@ export default async function WorksPage() {
     </main>
   );
 }
+
