@@ -19,7 +19,7 @@ function milestoneTone(status: "PENDING" | "DONE") {
 
 export default function PortalPage() {
   const [customer, setCustomer] = useState<CustomerProfile | null>(null);
-  const [projects, setProjects] = useState<CustomerProject[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
@@ -31,7 +31,7 @@ export default function PortalPage() {
     try {
       const [me, data] = await Promise.all([
         api.get("/api/auth/me"),
-        api.get("/api/auth/projects")
+        api.get("/api/projects")
       ]);
       setCustomer(me.data);
       setProjects(data.data.projects ?? []);
@@ -177,19 +177,30 @@ export default function PortalPage() {
               </article>
             ) : projects.length ? (
               projects.map((project) => (
-                <article key={project.id} className="soft-card p-5">
+                <article key={project.id || project._id} className="soft-card p-5">
+                  {project.coverImage && (
+                    <div className="mb-4 h-48 w-full rounded-lg overflow-hidden border border-black/10">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={project.coverImage} alt={project.title} className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <div className="flex flex-wrap items-start justify-between gap-3 border-b border-black/10 pb-4 mb-5">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">{project.businessType}</p>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">{project.businessType || project.type}</p>
                       <h2 className="text-2xl font-display text-[var(--ink)] mt-2">{project.title}</h2>
-                      <p className={`text-sm mt-2 font-semibold ${statusTone(project.status)}`}>{project.status}</p>
-                      <p className="text-sm text-[var(--muted)] mt-1">Date: {new Date(project.date).toLocaleDateString()}</p>
-                      <p className="text-sm text-[var(--muted)]">Value: ₹{project.value}</p>
+                      {project.status && <p className={`text-sm mt-2 font-semibold ${statusTone(project.status)}`}>{project.status}</p>}
+                      {project.date ? (
+                        <p className="text-sm text-[var(--muted)] mt-1">Date: {new Date(project.date).toLocaleDateString()}</p>
+                      ) : (
+                        <p className="text-sm text-[var(--muted)] mt-1">Date: {new Date(project.createdAt).toLocaleDateString()}</p>
+                      )}
+                      {project.value && <p className="text-sm text-[var(--muted)]">Value: ₹{project.value}</p>}
+                      {project.result && <p className="text-sm text-[var(--accent)] mt-2">{project.result}</p>}
                     </div>
                   </div>
 
                   <div className="space-y-6">
-                    {project.milestones?.map((milestone) => (
+                    {project.milestones?.map((milestone: any) => (
                       <div key={milestone.key} className="rounded-xl border border-black/10 bg-white/65 p-5">
                         <div className="flex items-center justify-between mb-3">
                           <p className="text-sm font-semibold text-[var(--ink)] uppercase tracking-[0.12em]">{milestone.title}</p>
@@ -206,7 +217,7 @@ export default function PortalPage() {
                           <div className="mb-4">
                             <p className="text-xs text-[var(--muted)] uppercase tracking-[0.12em] mb-1">Files</p>
                             <div className="space-y-1">
-                              {milestone.files.map((file) => (
+                              {milestone.files.map((file: string) => (
                                 <a
                                   key={file}
                                   href={file}
@@ -226,7 +237,7 @@ export default function PortalPage() {
                           {milestone.comments.length === 0 ? (
                             <p className="text-xs text-[var(--muted)] italic text-center py-2">No messages yet. Admin will provide updates here.</p>
                           ) : (
-                            milestone.comments.map((c, idx) => (
+                            milestone.comments.map((c: any, idx: number) => (
                               <div
                                 key={`${c.by}-${idx}`}
                                 className={`text-sm p-3 rounded-lg max-w-[85%] ${
