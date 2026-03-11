@@ -178,12 +178,15 @@ export default function PortalPage() {
             ) : projects.length ? (
               projects.map((project) => (
                 <article key={project.id || project._id} className="soft-card p-5">
-                  {project.coverImage && (
-                    <div className="mb-4 h-48 w-full rounded-lg overflow-hidden border border-black/10">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <div className="mb-4 h-48 w-full rounded-lg overflow-hidden border border-black/10 bg-white/60 flex items-center justify-center">
+                    {project.coverImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={project.coverImage} alt={project.title} className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src="/zero-logo.png" alt="ZeroOps" className="h-16 w-auto opacity-30" />
+                    )}
+                  </div>
                   <div className="flex flex-wrap items-start justify-between gap-3 border-b border-black/10 pb-4 mb-5">
                     <div>
                       <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">{project.businessType || project.type}</p>

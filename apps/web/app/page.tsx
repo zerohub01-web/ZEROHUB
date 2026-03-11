@@ -71,12 +71,17 @@ export default function HomePage() {
   const [services, setServices] = useState<{ _id: string; title: string }[]>([]);
   const [activeTrack, setActiveTrack] = useState<"acquire" | "operate" | "expand">("acquire");
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     api
       .get("/api/services")
       .then((res) => setServices(res.data))
       .catch(() => setServices([]));
+    api
+      .get("/api/auth/me")
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setIsAuthenticated(false));
   }, []);
 
   async function handleBooking(formData: FormData) {
@@ -367,7 +372,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-xl">
               <p className="text-xs md:text-sm uppercase tracking-[0.18em] text-white/70 font-semibold">Technology 2026</p>
-              <h2 className="text-3xl md:text-5xl font-display text-white mt-3 leading-tight">Architected by Nishanth Raj S: Enterprise Engineers for Small Businesses</h2>
+              <h2 className="text-3xl md:text-5xl font-display text-white mt-3 leading-tight">Enterprise Engineers for Small Businesses</h2>
             </div>
             <p className="max-w-md text-sm md:text-base text-white/80 leading-relaxed">
               Built with agentic workflows, event-driven automations, and secure production architecture expected in modern 2026 SaaS delivery.
@@ -420,17 +425,19 @@ export default function HomePage() {
         <CtaBlock />
       </section>
 
-      <section id="works" className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-12">
-        <div className="grid lg:grid-cols-3 gap-4">
-          {workHighlights.map((work) => (
-            <article key={work.title} className="soft-card p-6">
-              <p className="text-xs uppercase tracking-[0.15em] text-[var(--muted)]">{work.type}</p>
-              <h3 className="text-2xl font-display text-[var(--ink)] mt-2">{work.title}</h3>
-              <p className="text-sm text-[var(--accent)] mt-3">{work.result}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {isAuthenticated && (
+        <section id="works" className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-12">
+          <div className="grid lg:grid-cols-3 gap-4">
+            {workHighlights.map((work) => (
+              <article key={work.title} className="soft-card p-6">
+                <p className="text-xs uppercase tracking-[0.15em] text-[var(--muted)]">{work.type}</p>
+                <h3 className="text-2xl font-display text-[var(--ink)] mt-2">{work.title}</h3>
+                <p className="text-sm text-[var(--accent)] mt-3">{work.result}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section id="book" className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-24 md:pb-32">
         <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-6 md:gap-8 items-start">

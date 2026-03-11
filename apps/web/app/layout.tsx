@@ -5,7 +5,7 @@ import "./globals.css";
 export function generateMetadata(): Metadata {
   return {
     title: "Affordable Web Development & Automated Websites | ZeroOps Bangalore",
-    description: "ZeroOps delivers highly secure, affordable web development for small businesses. Founded by Nishanth Raj S, we engineer zero-maintenance Next.js websites.",
+    description: "ZeroOps delivers highly secure, affordable web development for small businesses. We engineer zero-maintenance Next.js websites with enterprise-grade automation.",
     alternates: { canonical: "https://zeroops.in" },
     openGraph: {
       title: "Affordable Web Development & Automated Websites | ZeroOps",
