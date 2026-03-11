@@ -12,7 +12,7 @@ services:
       - key: PORT
         value: 10000
       - key: MONGODB_URI
-        value: mongodb://localhost:27017/zero-os # IMPORTANT: You must change this to your MongoDB Atlas URI for production!
+        value: mongodb+srv://zerohub01_db_user:Zero_hub01@zero.tlyc3hw.mongodb.net/zero-os?retryWrites=true&w=majority&appName=ZERO
       - key: JWT_SECRET
         value: KASHNIZERO223344@kashnizero8590PURPLE2930
       - key: JWT_EXPIRES_IN
@@ -32,6 +32,6 @@ services:
       - key: CLOUDINARY_API_SECRET
         value: C6vNHfxaguCTzIsgDfoEIUlFStA
       - key: CLIENT_ORIGIN
-        sync: false # Set to your Vercel URL in the Render Dashboard once deployed (e.g. https://zero-web.vercel.app)
+        value: https://zeroops.in
       - key: GOOGLE_CLIENT_ID
         value: 784883477395-40ivk4ogpdkqq20rlebrb9vknvifaop6.apps.googleusercontent.com
