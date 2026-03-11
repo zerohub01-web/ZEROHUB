@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -129,6 +129,69 @@ export default function HomePage() {
 
   return (
     <main className="relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfessionalService",
+            "name": "ZeroOps Web Development",
+            "url": "https://zeroops.in",
+            "logo": "https://zeroops.in/logo.png",
+            "description": "ZeroOps provides automated, affordable web development and zero-maintenance Next.js websites for small businesses globally.",
+            "priceRange": "₹15000 - ₹100000",
+            "areaServed": [
+              { "@type": "City", "name": "Bangalore" },
+              { "@type": "Country", "name": "India" },
+              { "@type": "Place", "name": "Global" }
+            ],
+            "founder": {
+              "@type": "Person",
+              "name": "Nishanth Raj S",
+              "jobTitle": "Full-Stack DevOps Engineer",
+              "sameAs": [
+                "https://www.linkedin.com/in/nishanth-raj-s",
+                "https://github.com/nishanthrajs01-stack"
+              ]
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Web Development Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Automated Landing Page Deployment",
+                    "description": "High-conversion Next.js single page applications."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Full-Stack Web App Development",
+                    "description": "Custom Node.js/Express backends with automated CI/CD."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Zero-Maintenance E-Commerce",
+                    "description": "Secure, scalable storefronts with zero operational overhead."
+                  }
+                }
+              ]
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "reviewCount": "24"
+            }
+          })
+        }}
+      />
       <div className="orb orb-a" />
       <div className="orb orb-b" />
 
@@ -140,8 +203,7 @@ export default function HomePage() {
             Operating System for Growth Teams
           </p>
           <h1 className="mt-6 text-5xl md:text-7xl leading-[0.96] font-display tracking-tight text-[var(--ink)]">
-            A website that runs
-            <span className="block text-[var(--accent)]">your business.</span>
+            Affordable Web Development with Zero Operational Overhead
           </h1>
           <p className="mt-6 max-w-xl text-lg text-[var(--muted)]">
             ZERO combines cinematic brand presence with booking automation, secure admin controls, and decision-grade analytics.
@@ -197,7 +259,7 @@ export default function HomePage() {
         <div className="grid lg:grid-cols-[1fr_1.4fr] gap-6 md:gap-8">
           <div className="dark-card p-6 md:p-8 lg:p-10 flex flex-col justify-center">
             <p className="text-xs md:text-sm uppercase tracking-[0.18em] text-white/70">Pricing</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display mt-3 leading-tight">Straight plans for real delivery.</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display mt-3 leading-tight">Transparent, Affordable Web Development Pricing</h2>
             <p className="text-sm md:text-base text-white/90 mt-4 leading-relaxed">Productized pricing for fast delivery with strict scope and maximum value.</p>
             <div className="mt-8">
               <a href="/pricing" className="inline-block hover-lift btn-secondary rounded-full px-6 md:px-8 py-3 text-sm md:text-base font-semibold bg-white text-[var(--ink)] border-white">Full Pricing Breakdown</a>
@@ -220,7 +282,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div className="max-w-xl">
             <p className="text-xs uppercase tracking-[0.2em] font-semibold text-[var(--muted)]">Core Services</p>
-            <h2 className="text-4xl md:text-5xl font-display text-[var(--ink)] mt-3 leading-tight">What we deliver for companies</h2>
+            <h2 className="text-4xl md:text-5xl font-display text-[var(--ink)] mt-3 leading-tight">Automated Website Development & Secure Cloud Infrastructure</h2>
           </div>
           <p className="max-w-md text-sm md:text-base text-[var(--muted)] leading-relaxed">
             From storefront launches to AI-driven operations, we deliver scoped systems that remove manual workload and compound growth.
@@ -305,7 +367,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-xl">
               <p className="text-xs md:text-sm uppercase tracking-[0.18em] text-white/70 font-semibold">Technology 2026</p>
-              <h2 className="text-3xl md:text-5xl font-display text-white mt-3 leading-tight">Engineered like a product company.</h2>
+              <h2 className="text-3xl md:text-5xl font-display text-white mt-3 leading-tight">Architected by Nishanth Raj S: Enterprise Engineers for Small Businesses</h2>
             </div>
             <p className="max-w-md text-sm md:text-base text-white/80 leading-relaxed">
               Built with agentic workflows, event-driven automations, and secure production architecture expected in modern 2026 SaaS delivery.
