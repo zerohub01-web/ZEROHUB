@@ -8,6 +8,7 @@ import { env } from "./config/env.js";
 import { publicRouter } from "./routes/public.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
+import reviewRoutes from "./routes/review.routes.js";
 
 export const app = express();
 
@@ -59,6 +60,7 @@ app.get("/health", (_req, res) => res.json({ ok: true }));
 app.use("/api", publicRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/reviews", reviewRoutes);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   // eslint-disable-next-line no-console

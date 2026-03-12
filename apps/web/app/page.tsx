@@ -72,6 +72,7 @@ export default function HomePage() {
   const [activeTrack, setActiveTrack] = useState<"acquire" | "operate" | "expand">("acquire");
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
     api
@@ -82,6 +83,10 @@ export default function HomePage() {
       .get("/api/auth/me")
       .then(() => setIsAuthenticated(true))
       .catch(() => setIsAuthenticated(false));
+    api
+      .get("/api/reviews/public")
+      .then((res) => setReviews(res.data.reviews || []))
+      .catch(() => setReviews([]));
   }, []);
 
   async function handleBooking(formData: FormData) {
@@ -435,6 +440,38 @@ export default function HomePage() {
                 <h3 className="text-2xl font-display text-[var(--ink)] mt-2">{work.title}</h3>
                 <p className="text-sm text-[var(--accent)] mt-3">{work.result}</p>
               </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Testimonials Section */}
+      {reviews.length > 0 && (
+        <section id="testimonials" className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-16 md:pb-24">
+          <div className="text-center mb-12">
+            <p className="text-xs uppercase tracking-[0.2em] font-semibold text-[var(--muted)]">Testimonials</p>
+            <h2 className="text-4xl md:text-5xl font-display text-[var(--ink)] mt-3">What Our Clients Say</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviews.map((r, i) => (
+              <motion.article
+                key={r.createdAt}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="soft-card p-8 flex flex-col hover-lift"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, starIdx) => (
+                    <span key={starIdx} className={starIdx < r.rating ? "text-amber-400" : "text-gray-200"}>★</span>
+                  ))}
+                </div>
+                <p className="text-[var(--ink)] leading-relaxed italic flex-1">
+                  "{r.testimonial}"
+                </p>
+                <p className="text-sm font-semibold text-[var(--muted)] mt-6">— {r.clientName}</p>
+              </motion.article>
             ))}
           </div>
         </section>

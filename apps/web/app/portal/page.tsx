@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "../../lib/api";
 import { toast } from "react-hot-toast";
-import { FolderKanban, FolderOpen, LogOut, Mail, MessageSquare, RefreshCw, ShieldCheck, UserRound } from "lucide-react";
+import { FolderKanban, FolderOpen, LogOut, Mail, MessageSquare, RefreshCw, ShieldCheck, Star, UserRound } from "lucide-react";
 import { SiteHeader } from "../../components/SiteHeader";
 import { CustomerProfile, CustomerProject } from "../../types/customer";
 
@@ -24,17 +24,27 @@ export default function PortalPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [posting, setPosting] = useState<string | null>(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [hasExistingReview, setHasExistingReview] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const fetchData = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      const [me, data] = await Promise.all([
+      const [me, data, reviewRes] = await Promise.all([
         api.get("/api/auth/me"),
-        api.get("/api/auth/projects")
+        api.get("/api/auth/projects"),
+        api.get("/api/reviews/mine")
       ]);
       setCustomer(me.data);
       setProjects(data.data.projects ?? []);
+      if (reviewRes.data.review) {
+        setReviewRating(reviewRes.data.review.rating);
+        setReviewText(reviewRes.data.review.testimonial);
+        setHasExistingReview(true);
+      }
     } catch (err: any) {
       if (err.response?.status === 401) {
         window.location.href = "/login";
@@ -77,6 +87,24 @@ export default function PortalPage() {
       toast.error("Failed to send message.");
     } finally {
       setPosting(null);
+    }
+  }
+
+  async function handleReviewSubmit() {
+    if (reviewRating === 0 || !reviewText.trim()) {
+      toast.error("Please provide both a rating and a testimonial.");
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      await api.post("/api/reviews", { rating: reviewRating, testimonial: reviewText });
+      toast.success("Review submitted! It will appear publicly once approved.");
+      setHasExistingReview(true);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "Failed to submit review.";
+      toast.error(msg);
+    } finally {
+      setSubmittingReview(false);
     }
   }
 
@@ -302,6 +330,60 @@ export default function PortalPage() {
             )}
           </section>
         </div>
+
+        {/* Leave a Review Section */}
+        <section className="soft-card p-6 mt-8">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl font-display text-[var(--ink)]">
+              {hasExistingReview ? "Edit your review" : "Leave a Review"}
+            </h2>
+            <p className="text-[var(--muted)] mt-2">
+              How was your experience with ZeroOps? Your feedback helps us grow.
+            </p>
+
+            <div className="mt-8 flex justify-center gap-2">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setReviewRating(s)}
+                  className="transition transform hover:scale-110 active:scale-95"
+                >
+                  <Star
+                    size={32}
+                    className={s <= reviewRating ? "fill-amber-400 text-amber-400" : "text-gray-300"}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-6 relative">
+              <textarea
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value.slice(0, 500))}
+                placeholder="Share your experience (max 500 characters)..."
+                className="w-full h-32 p-4 rounded-xl border border-black/10 bg-white/65 focus:outline-none focus:ring-2 focus:ring-[var(--ink)] transition text-sm resize-none"
+              />
+              <span className="absolute bottom-3 right-3 text-[10px] text-[var(--muted)] font-mono">
+                {reviewText.length}/500
+              </span>
+            </div>
+
+            <button
+              onClick={handleReviewSubmit}
+              disabled={submittingReview}
+              className="mt-6 btn-primary w-full py-3 rounded-xl disabled:opacity-50"
+            >
+              {submittingReview ? (
+                <RefreshCw size={18} className="animate-spin mx-auto" />
+              ) : (
+                hasExistingReview ? "Update Review" : "Submit Review"
+              )}
+            </button>
+            <p className="text-[10px] text-[var(--muted)] mt-4 italic">
+              * Approved reviews appear publicly on our homepage.
+            </p>
+          </div>
+        </section>
       </div>
     </main>
   );
