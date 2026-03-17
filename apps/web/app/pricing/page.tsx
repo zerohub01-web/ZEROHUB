@@ -1,10 +1,10 @@
-﻿import { SiteHeader } from "../../components/SiteHeader";
+import { SiteHeader } from "../../components/SiteHeader";
 import { SiteFooter } from "../../components/SiteFooter";
 
 const tiers = [
   {
     name: "Digital Storefront",
-    price: "INR 15,000 - 25,000",
+    price: "INR 14,999 - 24,999",
     note: "Productized fast-delivery setup for businesses that need a clean launch quickly.",
     features: [
       "Up to 5 static pages (Home, About, Services, Gallery, Contact)",
@@ -17,7 +17,7 @@ const tiers = [
   },
   {
     name: "Business Automation",
-    price: "INR 40,000 - 60,000",
+    price: "INR 39,999 - 59,999",
     note: "For teams replacing manual follow-up and intake work with automation pipelines.",
     features: [
       "Everything in Digital Storefront + up to 10 pages and CMS",
@@ -31,7 +31,7 @@ const tiers = [
   },
   {
     name: "Digital Fortress & AI",
-    price: "INR 90,000 - 1,50,000+",
+    price: "INR 89,999 - 1,49,999+",
     note: "Operational infrastructure for companies that need custom systems, AI, and hardened security.",
     features: [
       "Custom backend architecture (Node.js or Python)",

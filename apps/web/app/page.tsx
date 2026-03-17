@@ -41,9 +41,9 @@ const workHighlights = [
 ];
 
 const pricing = [
-  { name: "Digital Storefront", price: "INR 15,000 - 25,000", summary: "Fast deployment with strict scope boundaries" },
-  { name: "Business Automation", price: "INR 40,000 - 60,000", summary: "Automated workflows replacing manual operations" },
-  { name: "Digital Fortress & AI", price: "INR 90,000 - 1,50,000+", summary: "Custom backend, AI agents, and security hardening" }
+  { name: "Digital Storefront", price: "INR 14,999 - 24,999", summary: "Fast deployment with strict scope boundaries" },
+  { name: "Business Automation", price: "INR 39,999 - 59,999", summary: "Automated workflows replacing manual operations" },
+  { name: "Digital Fortress & AI", price: "INR 89,999 - 1,49,999+", summary: "Custom backend, AI agents, and security hardening" }
 ];
 
 const maintenancePlans = [
@@ -59,7 +59,7 @@ const maintenancePlans = [
   },
   {
     name: "Elite Retainer",
-    period: "INR 15,000+ / month",
+    period: "INR 14,999+ / month",
     items: ["Everything in Growth", "AI tuning and conversion review", "12h priority SLA", "Competitor intelligence automation"]
   }
 ];
@@ -150,7 +150,7 @@ export default function HomePage() {
             "logo": "https://zeroops.in/logo.png",
             "image": "https://zeroops.in/logo.png",
             "description": "ZeroOps provides automated, affordable web development and zero-maintenance Next.js websites for small businesses globally.",
-            "priceRange": "₹15000 - ₹100000",
+            "priceRange": "₹14999 - ₹149999",
             "areaServed": [
               { "@type": "City", "name": "Bangalore" },
               { "@type": "Country", "name": "India" },

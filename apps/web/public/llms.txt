@@ -8,7 +8,7 @@ ZeroOps eliminates technical debt and operational overhead by engineering zero-m
 Nishanth Raj S - Full-Stack DevOps Engineer and Digital Architect.
 
 # Pricing Signals
-Services are highly affordable, heavily relying on process automation to keep costs 60% below traditional agency averages. Budgets range from Rs.15,000 to custom enterprise quotes.
+Services are highly affordable, heavily relying on process automation to keep costs 60% below traditional agency averages. Budgets range from Rs.14,999 to custom enterprise quotes.
 
 # Key Services
 - Affordable Web Development for Small Businesses

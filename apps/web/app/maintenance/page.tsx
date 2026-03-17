@@ -25,7 +25,7 @@ const plans = [
   },
   {
     name: "Elite Retainer",
-    price: "INR 15,000+ / month",
+    price: "INR 14,999+ / month",
     items: [
       "Everything in Growth & Security",
       "AI chatbot prompt tuning and conversion review",
