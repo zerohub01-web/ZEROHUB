@@ -3,7 +3,7 @@ import { SiteFooter } from "../../components/SiteFooter";
 
 const tiers = [
   {
-    name: "Digital Storefront",
+    name: "Basic",
     price: "INR 14,999 - 24,999",
     note: "Productized fast-delivery setup for businesses that need a clean launch quickly.",
     features: [
@@ -16,11 +16,11 @@ const tiers = [
     cta: "Start Storefront"
   },
   {
-    name: "Business Automation",
+    name: "Plus",
     price: "INR 39,999 - 59,999",
     note: "For teams replacing manual follow-up and intake work with automation pipelines.",
     features: [
-      "Everything in Digital Storefront + up to 10 pages and CMS",
+      "Everything in Basic + up to 10 pages and CMS",
       "Automated intake flows to Google Sheets/CRM",
       "Instant lead response via email or WhatsApp/SMS workflow",
       "Custom workflow modules (e.g., admissions or application tracking)",
@@ -30,7 +30,7 @@ const tiers = [
     featured: true
   },
   {
-    name: "Digital Fortress & AI",
+    name: "Premium",
     price: "INR 89,999 - 1,49,999+",
     note: "Operational infrastructure for companies that need custom systems, AI, and hardened security.",
     features: [

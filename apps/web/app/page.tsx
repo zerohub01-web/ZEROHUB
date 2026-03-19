@@ -41,9 +41,24 @@ const workHighlights = [
 ];
 
 const pricing = [
-  { name: "Digital Storefront", price: "INR 14,999 - 24,999", summary: "Fast deployment with strict scope boundaries" },
-  { name: "Business Automation", price: "INR 39,999 - 59,999", summary: "Automated workflows replacing manual operations" },
-  { name: "Digital Fortress & AI", price: "INR 89,999 - 1,49,999+", summary: "Custom backend, AI agents, and security hardening" }
+  { 
+    name: "Basic", 
+    price: "INR 14,999 - 24,999", 
+    summary: "Fast deployment with strict scope boundaries",
+    features: ["Up to 5 static pages", "Mobile-responsive architecture", "WhatsApp CTA + Lead capture", "One structural revision"]
+  },
+  { 
+    name: "Plus", 
+    price: "INR 39,999 - 59,999", 
+    summary: "Automated workflows replacing manual operations",
+    features: ["Up to 10 pages + CMS", "Automated intake flows (CRM)", "Instant email/WhatsApp response", "Custom workflow modules"]
+  },
+  { 
+    name: "Premium", 
+    price: "INR 89,999 - 1,49,999+", 
+    summary: "Custom backend, AI agents, and security hardening",
+    features: ["Custom backend (Node.js/Python)", "Business-trained AI assistant", "Advanced internal dashboards", "WAF, rate limiting, encryption"]
+  }
 ];
 
 const maintenancePlans = [
@@ -149,7 +164,7 @@ export default function HomePage() {
             "url": "https://zeroops.in",
             "logo": "https://zeroops.in/logo.png",
             "image": "https://zeroops.in/logo.png",
-            "description": "ZeroOps provides automated, affordable web development and zero-maintenance Next.js websites for small businesses globally.",
+            "description": "ZeroOps automates manual business workflows. Stop doing repetitive work. Scale operations with intelligent automation, custom integrations, and enterprise-grade security.",
             "priceRange": "₹14999 - ₹149999",
             "areaServed": [
               { "@type": "City", "name": "Bangalore" },
@@ -214,10 +229,10 @@ export default function HomePage() {
             Operating System for Growth Teams
           </p>
           <h1 className="mt-6 text-5xl md:text-7xl leading-[0.96] font-display tracking-tight text-[var(--ink)]">
-            Affordable Web Development with Zero Operational Overhead
+            Stop Doing Manual Work. We Build Automated Business Systems to Scale Your Operations.
           </h1>
           <p className="mt-6 max-w-xl text-lg text-[var(--muted)]">
-            ZERO combines cinematic brand presence with booking automation, secure admin controls, and decision-grade analytics.
+            From workflows to integrations. From data silos to unified systems. From chaos to certainty.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a href="/book" className="btn-primary hover-lift rounded-full px-8 py-3.5 text-sm md:text-base font-semibold shadow-md shadow-[var(--ink)]/10">Start Project</a>
@@ -281,7 +296,12 @@ export default function HomePage() {
               <article key={plan.name} className="soft-card p-6 md:p-7 flex flex-col hover-lift transition-all">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{plan.name}</p>
                 <p className="text-3xl md:text-4xl font-display text-[var(--ink)] mt-3">{plan.price}</p>
-                <p className="text-sm text-[var(--muted)] mt-4 leading-relaxed flex-1">{plan.summary}</p>
+                <p className="text-sm text-[var(--muted)] mt-4 leading-relaxed">{plan.summary}</p>
+                <ul className="mt-4 space-y-1.5 text-xs text-[var(--muted)] flex-1">
+                  {plan.features?.map(f => (
+                    <li key={f} className="flex gap-2"><span>•</span> {f}</li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>
@@ -519,9 +539,9 @@ export default function HomePage() {
                       ))
                     ) : (
                       <>
-                        <option value="Digital Storefront build">Digital Storefront build</option>
-                        <option value="Business Automation pipeline">Business Automation pipeline</option>
-                        <option value="Digital Fortress & AI system">Digital Fortress & AI system</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Plus">Plus</option>
+                        <option value="Premium">Premium</option>
                         <option value="Maintenance MRR plan">Maintenance MRR plan</option>
                       </>
                     )}

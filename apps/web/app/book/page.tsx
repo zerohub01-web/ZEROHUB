@@ -74,9 +74,9 @@ export default function BookPage() {
                     services.map((s)=><option key={s._id} value={s.title}>{s.title}</option>)
                   ) : (
                     <>
-                      <option value="Digital Storefront build">Digital Storefront build</option>
-                      <option value="Business Automation pipeline">Business Automation pipeline</option>
-                      <option value="Digital Fortress & AI system">Digital Fortress & AI system</option>
+                      <option value="Basic">Basic</option>
+                      <option value="Plus">Plus</option>
+                      <option value="Premium">Premium</option>
                       <option value="Maintenance MRR plan">Maintenance MRR plan</option>
                     </>
                   )}

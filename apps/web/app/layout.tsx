@@ -4,20 +4,20 @@ import "./globals.css";
 
 export function generateMetadata(): Metadata {
   return {
-    title: "Affordable Web Development & Automated Websites | ZeroOps Bangalore",
-    description: "ZeroOps delivers highly secure, affordable web development for small businesses. We engineer zero-maintenance Next.js websites with enterprise-grade automation.",
+    title: "ZeroOps | Business Automation Platform",
+    description: "ZeroOps automates manual business workflows. Stop doing repetitive work. Scale operations with intelligent automation, custom integrations, and enterprise-grade security.",
     alternates: { canonical: "https://zeroops.in" },
     openGraph: {
-      title: "Affordable Web Development & Automated Websites | ZeroOps",
-      description: "Enterprise-grade Next.js web applications tailored for small businesses. Automation-first, zero-maintenance, affordable pricing.",
+      title: "ZeroOps | Business Automation Platform",
+      description: "ZeroOps automates manual business workflows. Stop doing repetitive work. Scale operations with intelligent automation, custom integrations, and enterprise-grade security.",
       url: "https://zeroops.in",
       type: "website",
       images: [{ url: "https://zeroops.in/logo.png" }]
     },
     twitter: {
       card: "summary_large_image",
-      title: "Affordable Web Development | ZeroOps",
-      description: "Enterprise-grade Next.js web applications tailored for small businesses. Automation-first, zero-maintenance, affordable pricing.",
+      title: "ZeroOps | Business Automation Platform",
+      description: "ZeroOps automates manual business workflows. Stop doing repetitive work. Scale operations with intelligent automation, custom integrations, and enterprise-grade security.",
       images: ["https://zeroops.in/logo.png"]
     },
     robots: {
