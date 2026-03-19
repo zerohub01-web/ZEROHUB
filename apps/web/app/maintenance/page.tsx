@@ -4,7 +4,7 @@ import { SiteFooter } from "../../components/SiteFooter";
 const plans = [
   {
     name: "Essential Care",
-    price: "INR 2,000 - 3,500 / month",
+    price: "INR 2,000 - 3,500 / year",
     items: [
       "Managed cloud hosting",
       "Automated weekly off-site backups",
@@ -14,18 +14,18 @@ const plans = [
   },
   {
     name: "Growth & Security",
-    price: "INR 6,000 - 10,000 / month",
+    price: "INR 6,000 - 10,000 / year",
     items: [
       "Everything in Essential Care",
-      "Monthly vulnerability scan and patching",
+      "Quarterly vulnerability scan and patching",
       "Database optimization and cleanup",
-      "Up to 3 hours monthly updates/tweaks",
-      "Automated monthly analytics report"
+      "Up to 36 hours yearly updates/tweaks",
+      "Automated annual analytics report"
     ]
   },
   {
     name: "Elite Retainer",
-    price: "INR 14,999+ / month",
+    price: "INR 14,999+ / year",
     items: [
       "Everything in Growth & Security",
       "AI chatbot prompt tuning and conversion review",
@@ -52,7 +52,7 @@ export default function MaintenancePage() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           {plans.map((plan) => (
             <article key={plan.name} className="soft-card p-6">
-              <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">Monthly</p>
+              <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">Yearly</p>
               <h2 className="text-2xl font-display text-[var(--ink)] mt-2">{plan.name}</h2>
               <p className="text-xl font-display text-[var(--accent)] mt-2">{plan.price}</p>
               <ul className="mt-4 space-y-2 text-sm text-[var(--muted)]">

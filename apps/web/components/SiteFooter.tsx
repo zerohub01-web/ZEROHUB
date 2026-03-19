@@ -2,7 +2,7 @@ import { ZeroLogo } from "./brand/ZeroLogo";
 
 const socials = [
   { name: "Instagram", href: "https://www.instagram.com/_zero_ops_", label: "IG" },
-  { name: "Facebook", href: "https://www.facebook.com/zeroopsdigital", label: "FB" },
+  { name: "Facebook", href: "https://www.facebook.com/karthikeyansp", label: "FB" },
   { name: "LinkedIn", href: "https://linkedin.com/", label: "IN" },
   { name: "WhatsApp", href: "https://wa.me/918590464379", label: "WA" }
 ];
