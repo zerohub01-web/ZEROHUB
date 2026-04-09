@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "audit-website": {
+      "source": "squirrelscan/skills",
+      "sourceType": "github",
+      "computedHash": "82588484b29316f3106185374cc6aedf409c38a0698d49f7034c9b5ec07a1aa7"
+    },
+    "clone-website": {
+      "source": "julianromli/ai-skills",
+      "sourceType": "github",
+      "computedHash": "bb2d4973a1ac7eaba1f3b831a8ffd5b405c3a61920aaec10cf7c92314b80af01"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d8e7d3afe37dcc8a97b99ffb5afdb4d0919ae0092ea8b68f44eb201f035e33ac"
+    }
+  }
+}

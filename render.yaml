@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: zero-api
+    env: node
+    plan: free # Explicitly setting this forces Render to not ask for payment
+    region: frankfurt # or your preferred region like 'oregon'
+    repo: https://github.com/zerohub01-web/zero-2kid
+    rootDir: .
+    buildCommand: npm install && npm run build --workspace @zero/api
+    startCommand: npm run start --workspace @zero/api
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: mongodb+srv://zerohub01_db_user:Zero_hub01@zero.tlyc3hw.mongodb.net/zero-os?retryWrites=true&w=majority&appName=ZERO
+      - key: JWT_SECRET
+        value: KASHNIZERO223344@kashnizero8590PURPLE2930
+      - key: JWT_EXPIRES_IN
+        value: "7d"
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: RESEND_API_KEY
+        value: re_ZAkMN4R2_4SGRBsyeuYyWGDgKMQ3u4f1z
+      - key: EMAIL_FROM
+        value: Zero OS <zerohub01@gmail.com>
+      - key: ADMIN_NOTIFY_EMAIL
+        value: zerohub01@gmail.com
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dyejljul2
+      - key: CLOUDINARY_API_KEY
+        value: "684942337561281"
+      - key: CLOUDINARY_API_SECRET
+        value: C6vNHfxaguCTzIsgDfoEIUlFStA
+      - key: CLIENT_ORIGIN
+        value: https://zeroops.in
+      - key: GOOGLE_CLIENT_ID
+        value: 784883477395-40ivk4ogpdkqq20rlebrb9vknvifaop6.apps.googleusercontent.com
+      - key: META_API_VERSION
+        value: v18.0
+      - key: META_BUSINESS_ACCOUNT_ID
+        sync: false
+      - key: META_PHONE_NUMBER_ID
+        sync: false
+      - key: META_ACCESS_TOKEN
+        sync: false
+      - key: META_WEBHOOK_VERIFY_TOKEN
+        sync: false
+      - key: META_WEBHOOK_URL
+        value: https://zero-api-m0an.onrender.com/webhook/whatsapp
+      - key: WHATSAPP_BUSINESS_PHONE
+        value: "+919746927368"
+      - key: WHATSAPP_API_ENABLED
+        value: "true"

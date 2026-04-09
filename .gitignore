@@ -1,0 +1,23 @@
+node_modules
+.next
+dist
+.env
+.env.local
+coverage
+.DS_Store
+.vercel
+
+# Nested env files (monorepo safety)
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.local.example
+.vercel 
+tmp-chrome-profile* 
+node_modules 
+.env 
+tmp-chrome-profile* 
+tmp-chrome-profile-2* 
+tmp-chrome-profile-3* 
+.vercel 
+test-results/ 
