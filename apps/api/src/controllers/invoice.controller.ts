@@ -399,20 +399,7 @@ export async function sendInvoice(req: Request, res: Response) {
       warnings.push("whatsapp_phone_missing");
     }
 
-    return res.json({
-      success: true,
-      code: warnings.length > 0 ? "invoice_sent_with_warnings" : "invoice_sent",
-      warnings,
-      pdfGenerated,
-      emailSent,
-      whatsappSent,
-      pdfUrl: invoice.pdfUrl || null,
-      portalLink: portalAccess.portalLink,
-      status: invoice.status,
-      message: emailSent || whatsappSent
-        ? `Invoice sent to ${invoice.clientEmail}`
-        : "Invoice marked as sent. Email and WhatsApp delivery failed."
-    });
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Send invoice failed:", error);
     return res.status(500).json({

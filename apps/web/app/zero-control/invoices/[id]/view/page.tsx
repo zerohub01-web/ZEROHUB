@@ -2,7 +2,7 @@
 
 import type { Route } from "next";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { CheckCircle2, Circle, Download, Loader2, Mail, MessageSquare, Wallet } from "lucide-react";
@@ -63,16 +63,6 @@ export default function InvoiceDetailViewPage() {
   useEffect(() => {
     void fetchInvoice();
   }, [id]);
-
-  const reminderLink = useMemo(() => {
-    if (!invoice) return "";
-    const base = (process.env.NEXT_PUBLIC_ADMIN_WHATSAPP ?? "918590464379").replace(/\D/g, "") || "918590464379";
-    const amount = `${invoice.currencySymbol || "₹"}${Number(invoice.totalAmount || 0).toLocaleString("en-IN")}`;
-    const text = `Hi ${invoice.clientName}, just a reminder that invoice ${invoice.invoiceNumber} for ${amount} is due on ${new Date(
-      invoice.dueDate
-    ).toLocaleDateString("en-IN")}. Pay via UPI: ${invoice.upiId || "zerohub01@upi"}`;
-    return `https://wa.me/${base}?text=${encodeURIComponent(text)}`;
-  }, [invoice]);
 
   const sendAgain = async () => {
     if (!invoice) return;
@@ -197,9 +187,9 @@ export default function InvoiceDetailViewPage() {
             <Wallet size={14} /> Mark as Paid
           </button>
 
-          <a href={reminderLink} target="_blank" rel="noreferrer" className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white">
+          <button type="button" onClick={() => void sendAgain()} disabled={busy} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
             <MessageSquare size={14} /> Send Reminder
-          </a>
+          </button>
 
           <Link href={`/zero-control/invoices/${invoice.id}` as Route} className="inline-flex min-h-[44px] items-center rounded-lg border border-black/10 bg-white px-4 py-2 text-sm font-semibold">
             Edit Invoice
