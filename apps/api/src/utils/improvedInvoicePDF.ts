@@ -1,6 +1,15 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import type { Invoice, InvoiceItem } from "../db/schema.js";
 import { formatCurrency } from "./currency.js";
+
+// Dynamic import for @sparticuz/chromium to avoid TypeScript issues
+let chromium: any = null;
+async function getChromium() {
+  if (!chromium) {
+    chromium = await import("@sparticuz/chromium");
+  }
+  return chromium;
+}
 
 export interface InvoiceWithItems extends Omit<Invoice, "items"> {
   id: string;
@@ -325,17 +334,38 @@ function buildImprovedInvoiceHTML(invoice: InvoiceWithItems): string {
 const launchArgs = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"] as const;
 
 async function launchPdfBrowser() {
-  const executablePath = (process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || "").trim();
+  try {
+    // Try to use @sparticuz/chromium first (recommended for serverless/Render)
+    const chromium = await getChromium();
+    const executablePath = chromium.path || chromium.executablePath;
+    
+    if (executablePath) {
+      try {
+        return await puppeteer.launch({
+          headless: true,
+          args: [...launchArgs],
+          executablePath
+        });
+      } catch (error) {
+        console.warn(`[PDF] Failed launching @sparticuz/chromium. Retrying with Puppeteer managed browser.`, error);
+      }
+    }
+  } catch (chromiumError) {
+    console.warn(`[PDF] @sparticuz/chromium not available. Using system Chrome.`, chromiumError);
+  }
 
-  if (executablePath) {
+  // Fallback to system Chrome or Puppeteer managed browser
+  const fallbackExecutablePath = (process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || "").trim();
+
+  if (fallbackExecutablePath) {
     try {
       return await puppeteer.launch({
         headless: true,
         args: [...launchArgs],
-        executablePath
+        executablePath: fallbackExecutablePath
       });
     } catch (error) {
-      console.warn(`[PDF] Failed launching Chrome at "${executablePath}". Retrying with Puppeteer managed browser.`, error);
+      console.warn(`[PDF] Failed launching Chrome at "${fallbackExecutablePath}". Retrying with Puppeteer managed browser.`, error);
     }
   }
 
@@ -362,8 +392,8 @@ export async function generateImprovedInvoicePDF(invoice: InvoiceWithItems): Pro
         printBackground: true,
         margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
         displayHeaderFooter: true,
-        headerTemplate: '<div style="font-size:10px; color:#666; width:100%; text-align:center; padding:10px;">ZERO OPS - Invoice #' + currentPage + '</div>',
-        footerTemplate: '<div style="font-size:10px; color:#666; width:100%; text-align:center; padding:10px;">Page ' + currentPage + ' of ' + totalPages + '</div>'
+        headerTemplate: '<div style="font-size:10px; color:#666; width:100%; text-align:center; padding:10px;">ZERO OPS - Invoice #<span class="pageNumber"></span></div>',
+        footerTemplate: '<div style="font-size:10px; color:#666; width:100%; text-align:center; padding:10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'
       });
 
       return Buffer.from(pdf);

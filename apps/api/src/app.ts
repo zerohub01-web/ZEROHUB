@@ -137,6 +137,23 @@ const healthHandler: express.RequestHandler = async (_req, res) => {
 app.get("/health", healthHandler);
 app.get("/api/health", healthHandler);
 
+app.get("/health/pdf", async (_req, res) => {
+  try {
+    const chromium = await import("@sparticuz/chromium");
+    const puppeteer = await import("puppeteer-core");
+    const executablePath = await chromium.default.executablePath();
+    const browser = await puppeteer.default.launch({
+      args: chromium.default.args,
+      executablePath,
+      headless: chromium.default.headless,
+    });
+    await browser.close();
+    res.json({ ok: true, engine: "sparticuz/chromium" });
+  } catch (err: any) {
+    res.status(503).json({ ok: false, error: err?.message ?? "unknown" });
+  }
+});
+
 app.use("/api/proposals", proposalRouter);
 app.use("/api/proposals", express.static(getProposalsDirectoryPath()));
 app.use("/api/invoices/storage", express.static("storage/invoices"));
