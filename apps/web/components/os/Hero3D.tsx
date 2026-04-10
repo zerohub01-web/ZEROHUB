@@ -1,30 +1,35 @@
 "use client";
 
-const stackItems = [
-  "Next.js",
-  "Node.js",
-  "React",
-  "TypeScript",
-  "Cloudflare",
-  "MongoDB",
-  "Docker",
-  "GitHub Actions"
-];
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef } from "react";
+import type { Mesh } from "three";
+
+function TorusModel() {
+  const meshRef = useRef<Mesh>(null);
+
+  useFrame((_, delta) => {
+    if (!meshRef.current) return;
+    meshRef.current.rotation.x += delta * 0.35;
+    meshRef.current.rotation.y += delta * 0.62;
+  });
+
+  return (
+    <mesh ref={meshRef} rotation={[0.42, 0.24, 0]}>
+      <torusGeometry args={[1.02, 0.34, 56, 170]} />
+      <meshStandardMaterial color="#00c7a5" metalness={0.34} roughness={0.26} />
+    </mesh>
+  );
+}
 
 export default function Hero3D() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(circle_at_18%_18%,rgba(56,189,248,0.22),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(14,165,233,0.18),transparent_40%),linear-gradient(150deg,#081422_0%,#0a1f35_45%,#091627_100%)]">
-      <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
-      <div className="relative z-10 grid h-full grid-cols-2 gap-3 p-4 md:p-5 content-center">
-        {stackItems.map((item) => (
-          <div
-            key={item}
-            className="rounded-xl border border-white/25 bg-white/10 px-3 py-2 text-sm font-semibold tracking-[0.03em] text-slate-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
-          >
-            {item}
-          </div>
-        ))}
-      </div>
+    <div className="h-full w-full bg-[radial-gradient(circle_at_28%_18%,#f2fbff_0%,#ffffff_54%,#f4f7fa_100%)]">
+      <Canvas camera={{ position: [0, 0, 3.8], fov: 43 }} dpr={[1, 1.7]}>
+        <ambientLight intensity={0.92} />
+        <directionalLight position={[1.9, 2.4, 2.8]} intensity={1.22} />
+        <pointLight position={[-2, -1.1, 1.6]} intensity={0.48} />
+        <TorusModel />
+      </Canvas>
     </div>
   );
 }

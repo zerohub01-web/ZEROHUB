@@ -677,6 +677,11 @@ async function launchPdfBrowser() {
   });
 }
 
+function isMissingChromeError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return error.message.toLowerCase().includes("could not find chrome");
+}
+
 export async function generateContractPDF(contract: ContractForPdf): Promise<Buffer> {
   try {
     const browser = await launchPdfBrowser();
@@ -698,7 +703,11 @@ export async function generateContractPDF(contract: ContractForPdf): Promise<Buf
       await browser.close();
     }
   } catch (error) {
-    console.error("[PDF] Contract styled PDF generation failed. Falling back to simplified PDF.", error);
+    if (isMissingChromeError(error)) {
+      console.warn("[PDF] Contract styled renderer unavailable (Chrome not installed). Falling back to simplified PDF.");
+    } else {
+      console.error("[PDF] Contract styled PDF generation failed. Falling back to simplified PDF.", error);
+    }
     try {
       return await generateSimplePdf({
         title: "ZERO OPS - Service Agreement",

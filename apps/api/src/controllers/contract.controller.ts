@@ -253,6 +253,26 @@ function getWebBase(): string {
   return (process.env.NEXT_PUBLIC_WEB_URL ?? process.env.WEB_URL ?? envClientFallback()).replace(/\/$/, "");
 }
 
+function getErrorMessage(error: unknown): string {
+  if (!error) return "Unknown error";
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+function mapWhatsAppWarningCode(errorMessage: string): string {
+  const textMessage = errorMessage.toLowerCase();
+  if (textMessage.includes("account not registered") || textMessage.includes("#133010")) {
+    return "whatsapp_account_not_registered";
+  }
+  if (textMessage.includes("token invalid or expired") || textMessage.includes("invalid oauth")) {
+    return "whatsapp_token_invalid";
+  }
+  if (textMessage.includes("template")) {
+    return "whatsapp_template_missing";
+  }
+  return "whatsapp_send_failed";
+}
+
 async function sendAdminSignedWhatsApp(contract: ContractDocument): Promise<boolean> {
   const adminPhone = text(process.env.ADMIN_NOTIFY_WHATSAPP || process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "");
   if (!adminPhone) {
@@ -501,15 +521,11 @@ export async function sendContract(req: Request, res: Response) {
       return res.status(422).json({ message: "Admin signature is required before sending contract." });
     }
 
-    contract.clientPortalVisible = true;
-    contract.status = "SENT";
-    contract.emailSentAt = new Date();
-    await contract.save();
-
     const warnings: string[] = [];
     let pdfGenerated = false;
     let emailSent = false;
     let whatsappSent = false;
+    let whatsappErrorMessage = "";
     let pdfBuffer: Buffer | undefined;
 
     try {
@@ -554,26 +570,63 @@ export async function sendContract(req: Request, res: Response) {
         });
         whatsappSent = true;
       } catch (whatsappError) {
-        warnings.push("whatsapp_send_failed");
+        whatsappErrorMessage = getErrorMessage(whatsappError);
+        warnings.push(mapWhatsAppWarningCode(whatsappErrorMessage));
         console.error("Send contract WhatsApp failed:", whatsappError);
       }
     } else {
       warnings.push("whatsapp_phone_missing");
     }
 
-    return res.json({
-      success: true,
-      code: warnings.length > 0 ? "contract_sent_with_warnings" : "contract_sent",
-      warnings,
+    const sentAtLeastOneChannel = emailSent || whatsappSent;
+
+    contract.clientPortalVisible = true;
+    if (emailSent) {
+      contract.emailSentAt = new Date();
+    }
+    if (sentAtLeastOneChannel) {
+      contract.status = "SENT";
+    }
+    await contract.save();
+
+    const uniqueWarnings = Array.from(new Set(warnings));
+
+    return res.status(sentAtLeastOneChannel ? 200 : 502).json({
+      success: sentAtLeastOneChannel,
+      code:
+        sentAtLeastOneChannel && uniqueWarnings.length === 0
+          ? "contract_sent"
+          : sentAtLeastOneChannel
+            ? "contract_sent_with_warnings"
+            : "contract_delivery_failed",
+      message:
+        sentAtLeastOneChannel && uniqueWarnings.length === 0
+          ? "Contract delivered successfully."
+          : sentAtLeastOneChannel
+            ? "Contract delivered with partial channel failures."
+            : "Contract delivery failed on all channels.",
+      warnings: uniqueWarnings,
       pdfGenerated,
       emailSent,
       whatsappSent,
       pdfUrl: contract.pdfUrl || null,
       portalLink: portalAccess.portalLink,
       status: contract.status,
-      message: emailSent || whatsappSent
-        ? `Contract sent to ${contract.clientEmail}`
-        : "Contract marked as sent. Email and WhatsApp delivery failed."
+      delivery: {
+        pdf: {
+          attempted: true,
+          success: pdfGenerated
+        },
+        email: {
+          attempted: true,
+          success: emailSent
+        },
+        whatsapp: {
+          attempted: Boolean(text(contract.clientPhone)),
+          success: whatsappSent,
+          error: whatsappErrorMessage || undefined
+        }
+      }
     });
   } catch (error) {
     console.error("Send contract failed:", error);

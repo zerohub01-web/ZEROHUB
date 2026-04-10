@@ -393,17 +393,24 @@ export async function sendHeadlessInvoice(phone: string, invoiceData: HeadlessIn
     invoiceData.templateName || process.env.META_INVOICE_TEMPLATE_NAME || process.env.META_DEFAULT_TEMPLATE_NAME || ""
   ).trim();
 
-  if (!templateName) {
-    throw new WhatsAppError(
-      "META_INVOICE_TEMPLATE_NAME missing. Configure META_INVOICE_TEMPLATE_NAME (or fallback META_DEFAULT_TEMPLATE_NAME) with a Meta-approved template.",
-      500
-    );
-  }
-
   const phoneDigits = normalizePhoneForMeta(phone);
   const languageCode = String(invoiceData.templateLanguageCode || process.env.META_TEMPLATE_LANGUAGE || DEFAULT_TEMPLATE_LANGUAGE).trim();
   const amountLabel = formatInvoiceAmount(invoiceData.totalAmount, invoiceData.currencySymbol || "INR ");
   const dueDate = formatInvoiceDueDate(invoiceData.dueDate);
+
+  if (!templateName) {
+    return sendWhatsAppMessage({
+      phone: phoneDigits,
+      message: [
+        `Invoice ${sanitizeTemplateText(invoiceData.invoiceNumber)}`,
+        `Client: ${sanitizeTemplateText(invoiceData.clientName || "Customer")}`,
+        `Amount: ${sanitizeTemplateText(amountLabel)}`,
+        `Due date: ${sanitizeTemplateText(dueDate)}`,
+        `View and pay: ${sanitizeTemplateText(invoiceData.portalLink)}`
+      ].join("\n"),
+      allowTemplateFallback: true
+    });
+  }
 
   const bodyParameters: TemplateParameter[] = [
     { type: "text", text: sanitizeTemplateText(invoiceData.clientName || "Customer") },

@@ -165,7 +165,6 @@ export default function HomePage() {
   const [activeTrack, setActiveTrack] = useState<"acquire" | "operate" | "expand">("acquire");
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
   const [reviews, setReviews] = useState<any[]>([]);
-  const [showDesktopHero, setShowDesktopHero] = useState(false);
 
   useEffect(() => {
     api
@@ -193,21 +192,6 @@ export default function HomePage() {
         );
       })
       .catch(() => setCaseStudies([]));
-  }, []);
-
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 768px)");
-    const sync = () => setShowDesktopHero(media.matches);
-
-    sync();
-
-    if (typeof media.addEventListener === "function") {
-      media.addEventListener("change", sync);
-      return () => media.removeEventListener("change", sync);
-    }
-
-    media.addListener(sync);
-    return () => media.removeListener(sync);
   }, []);
 
   const trackContent = {
@@ -333,9 +317,9 @@ export default function HomePage() {
 
         <div className="tilt-panel p-4 md:p-5 relative">
           <div className="rounded-2xl border border-black/10 bg-white/70 p-3 relative">
-            <div className="h-[300px] md:h-[360px] rounded-xl overflow-hidden border border-black/10 bg-[var(--ink)]/95">
+            <div className="h-[300px] md:h-[360px] rounded-xl overflow-hidden border border-black/10 bg-white">
               <div className="hidden md:block h-full">
-                {showDesktopHero ? <Hero3D /> : null}
+                <Hero3D />
               </div>
               <div className="md:hidden h-full grid place-items-center px-4 text-center text-white/70 text-sm">
                 Mobile mode runs a lightweight visualization.
