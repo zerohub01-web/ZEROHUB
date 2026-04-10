@@ -141,16 +141,20 @@ app.get("/health/pdf", async (_req, res) => {
   try {
     const chromium = await import("@sparticuz/chromium");
     const puppeteer = await import("puppeteer-core");
-    const executablePath = await chromium.default.executablePath();
-    const browser = await puppeteer.default.launch({
-      args: chromium.default.args,
+    
+    // Test basic PDF generation capability
+    const executablePath = await chromium.executablePath();
+    const browser = await puppeteer.launch({
+      args: chromium.args,
       executablePath,
-      headless: chromium.default.headless,
+      headless: chromium.headless,
     });
     await browser.close();
+    
     res.json({ ok: true, engine: "sparticuz/chromium" });
   } catch (err: any) {
-    res.status(503).json({ ok: false, error: err?.message ?? "unknown" });
+    console.error("[Health] PDF generation test failed:", err?.message);
+    res.status(503).json({ ok: false, error: err?.message ?? "PDF generation unavailable" });
   }
 });
 
