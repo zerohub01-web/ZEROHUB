@@ -21,3 +21,4 @@ tmp-chrome-profile-2*
 tmp-chrome-profile-3* 
 .vercel 
 test-results/ 
+.env*.local

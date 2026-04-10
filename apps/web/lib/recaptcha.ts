@@ -25,8 +25,8 @@ export function getRecaptchaSiteKey(): string {
 
 export function getRecaptchaMode(): RecaptchaMode {
   const rawMode = (process.env.NEXT_PUBLIC_RECAPTCHA_MODE ?? "").trim().toLowerCase();
-  if (rawMode === "v3" || rawMode === "score" || rawMode === "invisible") return "v3";
-  return "checkbox";
+  if (rawMode === "checkbox" || rawMode === "v2") return "checkbox";
+  return "v3";
 }
 
 export function isRecaptchaSiteKeyConfigured(siteKey = getRecaptchaSiteKey()): boolean {
@@ -50,17 +50,21 @@ export function extractCaptchaErrorCode(payload: unknown): CaptchaErrorCode | un
 }
 
 export function getCaptchaErrorMessage(code?: string, fallback?: string): string {
+  const cleanFallback = String(fallback ?? "").trim();
+
   switch (code) {
     case "captcha_required":
       return "Complete the CAPTCHA security check before submitting.";
     case "captcha_invalid":
+      if (/invalid key type/i.test(cleanFallback)) {
+        return "CAPTCHA key type mismatch detected. Security check will run automatically on submit.";
+      }
       return "We couldn't verify the security check. Please try again.";
     case "captcha_expired":
       return "Your security check expired. Please complete it again.";
     case "captcha_unavailable":
       return "The CAPTCHA security check is temporarily unavailable. Please try again shortly.";
     default: {
-      const cleanFallback = String(fallback ?? "").trim();
       return cleanFallback || "We couldn't verify the security check. Please try again.";
     }
   }

@@ -4,7 +4,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Menu, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ZeroLogo } from "./brand/ZeroLogo";
 
 type NavItem = {
@@ -41,6 +41,8 @@ const desktopNavItems: NavItem[] = [
 export function SiteHeader({ portalMode = false, onLogout }: SiteHeaderProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [spacerHeight, setSpacerHeight] = useState(102);
+  const shellRef = useRef<HTMLDivElement | null>(null);
 
   const portalNavItems: NavItem[] = useMemo(
     () => [
@@ -62,10 +64,36 @@ export function SiteHeader({ portalMode = false, onLogout }: SiteHeaderProps) {
 
   const isActive = (href: Route) => pathname === href;
 
+  useEffect(() => {
+    if (!shellRef.current) return;
+
+    const measure = () => {
+      if (!shellRef.current) return;
+      const nextHeight = Math.ceil(shellRef.current.getBoundingClientRect().height);
+      if (nextHeight > 0) {
+        setSpacerHeight(nextHeight);
+      }
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(measure);
+      observer.observe(shellRef.current);
+    }
+
+    return () => {
+      window.removeEventListener("resize", measure);
+      observer?.disconnect();
+    };
+  }, [open, portalMode]);
+
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pt-3 md:pt-4">
+        <div ref={shellRef} className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pt-3 md:pt-4">
           <div className="glass-header header-shell px-4 md:px-5 py-3 flex items-center justify-between gap-3">
             <div className="logo-glass shrink-0">
               <Link href="/" aria-label="ZERO Home" className="inline-flex min-h-[44px] items-center">
@@ -207,7 +235,7 @@ export function SiteHeader({ portalMode = false, onLogout }: SiteHeaderProps) {
 
       <div
         aria-hidden
-        className={open ? "h-[16.25rem] sm:h-[16.75rem] xl:h-[6.5rem]" : "h-[6.15rem] sm:h-[6.5rem]"}
+        style={{ height: `${spacerHeight}px` }}
       />
     </>
   );

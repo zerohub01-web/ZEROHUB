@@ -225,6 +225,7 @@ export function LeadCaptureWidget() {
   const [pendingSubmission, setPendingSubmission] = useState<Record<string, string> | null>(null);
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaStatusCode, setCaptchaStatusCode] = useState("");
+  const [captchaFallbackToV3, setCaptchaFallbackToV3] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const otherInputRef = useRef<HTMLInputElement>(null);
@@ -232,6 +233,7 @@ export function LeadCaptureWidget() {
 
   const currentStep = useMemo(() => CHAT_STEPS[currentStepIndex], [currentStepIndex]);
   const recaptchaMode = getRecaptchaMode();
+  const effectiveRecaptchaMode = captchaFallbackToV3 ? "v3" : recaptchaMode;
 
   const adminWhatsAppNumber =
     (process.env.NEXT_PUBLIC_ADMIN_WHATSAPP ?? "918590464379").replace(/\D/g, "") || "918590464379";
@@ -420,7 +422,7 @@ export function LeadCaptureWidget() {
       await wait(1000);
       setIsTyping(false);
       setPendingSubmission(newAnswers);
-      if (recaptchaMode === "checkbox") {
+      if (effectiveRecaptchaMode === "checkbox") {
         setAwaitingCaptcha(true);
         setMessages((prev) => [
           ...prev,
@@ -512,6 +514,7 @@ export function LeadCaptureWidget() {
     setRetryCount(0);
     setAwaitingCaptcha(false);
     setPendingSubmission(null);
+    setCaptchaFallbackToV3(false);
     resetCaptcha();
     setMessages([{ role: "bot", text: CHAT_STEPS[0].question }]);
   };
@@ -519,7 +522,7 @@ export function LeadCaptureWidget() {
   const handleCaptchaSubmit = async () => {
     if (!pendingSubmission || isSubmitting) return;
 
-    if (recaptchaMode === "v3") {
+    if (effectiveRecaptchaMode === "v3") {
       setMessages((prev) => [...prev, { role: "bot", text: "Perfect. Processing your details now..." }]);
       try {
         const token = await executeRecaptchaAction("chatbot_submit");
@@ -693,7 +696,7 @@ export function LeadCaptureWidget() {
             </div>
           ) : null}
 
-          {recaptchaMode === "checkbox" && awaitingCaptcha && !isSubmitted && !isTyping ? (
+          {effectiveRecaptchaMode === "checkbox" && awaitingCaptcha && !isSubmitted && !isTyping ? (
             <div className="input-area captcha-panel">
               <div className="captcha-card">
                 <p className="captcha-title">Security Check</p>
@@ -708,6 +711,10 @@ export function LeadCaptureWidget() {
                     }}
                     onStatusChange={(status) => {
                       setCaptchaStatusCode(status.code ?? "");
+                      if (status.code === "captcha_invalid") {
+                        setCaptchaFallbackToV3(true);
+                        setCaptchaToken("");
+                      }
                     }}
                   />
                 </div>

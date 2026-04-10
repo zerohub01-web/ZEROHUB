@@ -131,31 +131,41 @@ export const RecaptchaCheckbox = forwardRef<RecaptchaCheckboxHandle, RecaptchaCh
             return;
           }
 
-          widgetIdRef.current = window.grecaptcha.render(widgetContainerRef.current, {
-            sitekey: siteKey,
-            theme,
-            size,
-            callback: (token: string) => {
-              if (cancelled) return;
-              publishToken(token);
-              publishStatus({
-                state: "verified",
-                message: "Security check complete. You can submit now."
-              });
-            },
-            "expired-callback": () => {
-              if (cancelled) return;
-              publishToken("");
-              publishStatus({
-                state: "expired",
-                code: "captcha_expired",
-                message: getCaptchaErrorMessage("captcha_expired")
-              });
-            },
-            "error-callback": () => {
+          try {
+            widgetIdRef.current = window.grecaptcha.render(widgetContainerRef.current, {
+              sitekey: siteKey,
+              theme,
+              size,
+              callback: (token: string) => {
+                if (cancelled) return;
+                publishToken(token);
+                publishStatus({
+                  state: "verified",
+                  message: "Security check complete. You can submit now."
+                });
+              },
+              "expired-callback": () => {
+                if (cancelled) return;
+                publishToken("");
+                publishStatus({
+                  state: "expired",
+                  code: "captcha_expired",
+                  message: getCaptchaErrorMessage("captcha_expired")
+                });
+              },
+              "error-callback": () => {
+                handleWidgetError("captcha_unavailable", getCaptchaErrorMessage("captcha_unavailable"));
+              }
+            });
+          } catch (error) {
+            const reason = error instanceof Error ? error.message : String(error ?? "");
+            if (/invalid key type/i.test(reason)) {
+              handleWidgetError("captcha_invalid", getCaptchaErrorMessage("captcha_invalid", reason));
+            } else {
               handleWidgetError("captcha_unavailable", getCaptchaErrorMessage("captcha_unavailable"));
             }
-          });
+            return;
+          }
 
           publishStatus({ state: "ready", message: "" });
         })

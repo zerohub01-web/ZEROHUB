@@ -7,7 +7,7 @@ import { BookingRequestForm } from "../../components/booking/BookingRequestForm"
 export default function BookPage() {
   if (process.env.NODE_ENV === "development") {
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    const recaptchaMode = process.env.NEXT_PUBLIC_RECAPTCHA_MODE ?? "checkbox";
+    const recaptchaMode = process.env.NEXT_PUBLIC_RECAPTCHA_MODE ?? "v3";
     if (!siteKey || siteKey === "your_site_key_here") {
       console.warn(
         "WARNING: NEXT_PUBLIC_RECAPTCHA_SITE_KEY not set.",

@@ -25,11 +25,11 @@ describe("reCAPTCHA web helpers", () => {
     expect(extractCaptchaErrorCode(null)).toBeUndefined();
   });
 
-  test("W6.4 - defaults recaptcha mode to checkbox and supports v3 override", () => {
+  test("W6.4 - defaults recaptcha mode to v3 and supports checkbox override", () => {
     delete process.env.NEXT_PUBLIC_RECAPTCHA_MODE;
-    expect(getRecaptchaMode()).toBe("checkbox");
-
-    process.env.NEXT_PUBLIC_RECAPTCHA_MODE = "v3";
     expect(getRecaptchaMode()).toBe("v3");
+
+    process.env.NEXT_PUBLIC_RECAPTCHA_MODE = "checkbox";
+    expect(getRecaptchaMode()).toBe("checkbox");
   });
 });
