@@ -4,7 +4,7 @@ import type { Request, Response } from "express";
 import { InvoiceModel, type InvoiceDocument, type InvoiceItem, type InvoiceStatus } from "../db/schema.js";
 import { generateInvoiceNumber } from "../utils/invoiceNumber.js";
 import { detectCurrency } from "../utils/currency.js";
-import { generateInvoicePDF, type InvoiceWithItems } from "../utils/generateInvoicePDF.js";
+import { generateInvoicePDF, generateImprovedInvoicePDF, type InvoiceWithItems } from "../utils/generateInvoicePDF.js";
 import { buildPortalAccess } from "../utils/portalToken.js";
 import { sendInvoiceEmail, sendInvoiceSignedNotifications } from "../services/invoiceEmail.js";
 import { sendHeadlessInvoice, sendWhatsAppMessage } from "../services/whatsapp.service.js";
@@ -372,7 +372,7 @@ export async function sendInvoice(req: Request, res: Response) {
     let pdfBuffer: Buffer | undefined;
 
     try {
-      pdfBuffer = await generateInvoicePDF(toInvoiceWithItems(invoice));
+      pdfBuffer = await generateImprovedInvoicePDF(toInvoiceWithItems(invoice));
       const pdfUrl = await savePdf(String(invoice._id), pdfBuffer);
 
       invoice.pdfUrl = pdfUrl;
@@ -561,7 +561,7 @@ export async function downloadInvoicePdf(req: Request, res: Response) {
       return res.send(file);
     } catch {
       try {
-        const pdfBuffer = await generateInvoicePDF(toInvoiceWithItems(invoice));
+        const pdfBuffer = await generateImprovedInvoicePDF(toInvoiceWithItems(invoice));
         try {
           await savePdf(String(invoice._id), pdfBuffer);
         } catch (saveError) {
@@ -582,6 +582,67 @@ export async function downloadInvoicePdf(req: Request, res: Response) {
     console.error("Download invoice PDF failed:", error);
     return res.status(500).json({ message: "Failed to download invoice PDF" });
   }
+}
+
+export async function saveInvoicePdf(req: Request, res: Response) {
+  try {
+    const invoice = await InvoiceModel.findById(req.params.id);
+    if (!invoice) {
+      return res.status(404).json({ message: "Invoice not found" });
+    }
+
+    try {
+      const pdfBuffer = await generateImprovedInvoicePDF(toInvoiceWithItems(invoice));
+      const pdfUrl = await savePdf(String(invoice._id), pdfBuffer);
+      
+      return res.status(200).json({
+        success: true,
+        message: "PDF saved successfully",
+        pdfUrl: pdfUrl
+      });
+    } catch (error) {
+      console.error("Save invoice PDF failed:", error);
+      return res.status(500).json({ message: "Failed to save invoice PDF" });
+  }
+}
+
+export async function updateInvoiceSignature(req: Request, res: Response) {
+  try {
+    const { signature, type } = req.body;
+    const invoice = await InvoiceModel.findById(req.params.id);
+    
+    if (!invoice) {
+      return res.status(404).json({ message: "Invoice not found" });
+    }
+
+    if (!signature || !type) {
+      return res.status(400).json({ message: "Signature and type are required" });
+    }
+
+    if (type === 'client') {
+      invoice.clientSignature = signature;
+    } else if (type === 'admin') {
+      invoice.adminSignature = signature;
+    } else {
+      return res.status(400).json({ message: "Invalid signature type. Must be 'client' or 'admin'" });
+    }
+
+    await invoice.save();
+
+    // Generate new PDF with signature
+    try {
+      const pdfBuffer = await generateImprovedInvoicePDF(toInvoiceWithItems(invoice));
+      const pdfUrl = await savePdf(String(invoice._id), pdfBuffer);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Signature updated and PDF regenerated",
+        pdfUrl: pdfUrl
+      });
+    } catch (error) {
+      console.error("Update signature failed:", error);
+      return res.status(500).json({ message: "Failed to update signature" });
+    }
 }
 
 export async function getPublicInvoiceView(req: Request, res: Response) {

@@ -8,10 +8,12 @@ import {
   getPublicInvoiceView,
   invoiceDashboardStats,
   listInvoices,
+  saveInvoicePdf,
   sendInvoice,
   signInvoice,
-  updateInvoice
-} from "../controllers/invoice.controller.js";
+  updateInvoice,
+  updateInvoiceSignature
+} from "../controllers/invoice.controller";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { verifyToken } from "../utils/auth.js";
 import { verifyPortalToken } from "../utils/portalToken.js";
@@ -61,6 +63,8 @@ invoiceRouter.patch("/api/invoices/:id", requireAuth, requireRole(["SUPER_ADMIN"
 invoiceRouter.delete("/api/invoices/:id", requireAuth, requireRole(["SUPER_ADMIN"]), deleteInvoice);
 invoiceRouter.post("/api/invoices/:id/send", requireAuth, requireRole(["SUPER_ADMIN", "MANAGER"]), sendInvoice);
 invoiceRouter.post("/api/invoices/:id/sign", requirePortalToken("sign"), signInvoice);
+invoiceRouter.post("/api/invoices/:id/pdf/save", requireAuth, requireRole(["SUPER_ADMIN", "MANAGER"]), saveInvoicePdf);
+invoiceRouter.patch("/api/invoices/:id/signature", requireAuth, requireRole(["SUPER_ADMIN", "MANAGER"]), updateInvoiceSignature);
 invoiceRouter.get("/api/invoices/:id/pdf", requirePortalToken("pdf"), downloadInvoicePdf);
 
 invoiceRouter.get("/portal/invoice/:id", publicInvoiceLimiter, requirePortalToken("view"), getPublicInvoiceView);
