@@ -137,26 +137,7 @@ const healthHandler: express.RequestHandler = async (_req, res) => {
 app.get("/health", healthHandler);
 app.get("/api/health", healthHandler);
 
-app.get("/health/pdf", async (_req, res) => {
-  try {
-    const chromium = await import("@sparticuz/chromium");
-    const puppeteer = await import("puppeteer-core");
-    
-    // Test basic PDF generation capability
-    const executablePath = await chromium.executablePath();
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath,
-      headless: chromium.headless,
-    });
-    await browser.close();
-    
-    res.json({ ok: true, engine: "sparticuz/chromium" });
-  } catch (err: any) {
-    console.error("[Health] PDF generation test failed:", err?.message);
-    res.status(503).json({ ok: false, error: err?.message ?? "PDF generation unavailable" });
-  }
-});
+// PDF generation now uses pdf-lib only - no browser dependency needed
 
 app.use("/api/proposals", proposalRouter);
 app.use("/api/proposals", express.static(getProposalsDirectoryPath()));

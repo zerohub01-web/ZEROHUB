@@ -1,15 +1,6 @@
-import puppeteer from "puppeteer-core";
+import { PDFDocument, StandardFonts, rgb, type PDFFont } from "pdf-lib";
 import type { Invoice, InvoiceItem } from "../db/schema.js";
 import { formatCurrency } from "./currency.js";
-
-// Dynamic import for @sparticuz/chromium to avoid TypeScript issues
-let chromium: any = null;
-async function getChromium() {
-  if (!chromium) {
-    chromium = await import("@sparticuz/chromium");
-  }
-  return chromium;
-}
 
 export interface InvoiceWithItems extends Omit<Invoice, "items"> {
   id: string;
@@ -331,109 +322,79 @@ function buildImprovedInvoiceHTML(invoice: InvoiceWithItems): string {
 </html>`;
 }
 
-const launchArgs = ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"] as const;
-
-async function launchPdfBrowser() {
-  try {
-    // Try to use @sparticuz/chromium first (recommended for serverless/Render)
-    const chromium = await getChromium();
-    const executablePath = chromium.path || chromium.executablePath;
-    
-    if (executablePath) {
-      try {
-        return await puppeteer.launch({
-          headless: true,
-          args: [...launchArgs],
-          executablePath
-        });
-      } catch (error) {
-        console.warn(`[PDF] Failed launching @sparticuz/chromium. Retrying with Puppeteer managed browser.`, error);
-      }
-    }
-  } catch (chromiumError) {
-    console.warn(`[PDF] @sparticuz/chromium not available. Using system Chrome.`, chromiumError);
-  }
-
-  // Fallback to system Chrome or Puppeteer managed browser
-  const fallbackExecutablePath = (process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || "").trim();
-
-  if (fallbackExecutablePath) {
-    try {
-      return await puppeteer.launch({
-        headless: true,
-        args: [...launchArgs],
-        executablePath: fallbackExecutablePath
-      });
-    } catch (error) {
-      console.warn(`[PDF] Failed launching Chrome at "${fallbackExecutablePath}". Retrying with Puppeteer managed browser.`, error);
-    }
-  }
-
-  return puppeteer.launch({
-    headless: true,
-    args: [...launchArgs]
-  });
-}
-
-function isMissingChromeError(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
-  return error.message.toLowerCase().includes("could not find chrome");
-}
-
 export async function generateImprovedInvoicePDF(invoice: InvoiceWithItems): Promise<Buffer> {
   try {
-    const browser = await launchPdfBrowser();
-    try {
-      const page = await browser.newPage();
-      await page.setContent(buildImprovedInvoiceHTML(invoice), { waitUntil: "networkidle0" });
-
-      const pdf = await page.pdf({
-        format: "A4",
-        printBackground: true,
-        margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-        displayHeaderFooter: true,
-        headerTemplate: '<div style="font-size:10px; color:#666; width:100%; text-align:center; padding:10px;">ZERO OPS - Invoice #<span class="pageNumber"></span></div>',
-        footerTemplate: '<div style="font-size:10px; color:#666; width:100%; text-align:center; padding:10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>'
-      });
-
-      return Buffer.from(pdf);
-    } finally {
-      await browser.close();
+    const doc = await PDFDocument.create();
+    const regularFont = await doc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
+    
+    // Page setup
+    let page = doc.addPage([595, 842]); // A4 size
+    
+    // Header
+    page.drawText('ZERO OPS', { x: 50, y: 750, size: 24, font: boldFont, color: rgb(0.15, 0.4, 0.95) });
+    page.drawText('Business Automation Systems', { x: 50, y: 725, size: 12, font: regularFont, color: rgb(0.4, 0.45, 0.5) });
+    
+    // Invoice metadata
+    page.drawText(`Invoice #${invoice.invoiceNumber}`, { x: 400, y: 750, size: 18, font: boldFont, color: rgb(0.15, 0.4, 0.95) });
+    page.drawText(`Issued: ${new Date(invoice.createdAt).toLocaleDateString("en-IN")}`, { x: 400, y: 725, size: 10, font: regularFont });
+    page.drawText(`Due: ${new Date(invoice.dueDate).toLocaleDateString("en-IN")}`, { x: 400, y: 705, size: 10, font: regularFont });
+    
+    // Client info
+    page.drawText('Bill To:', { x: 50, y: 650, size: 14, font: boldFont });
+    page.drawText(invoice.clientName, { x: 50, y: 625, size: 12, font: regularFont });
+    page.drawText(invoice.clientBusiness, { x: 50, y: 605, size: 10, font: regularFont });
+    page.drawText(invoice.clientEmail, { x: 50, y: 585, size: 10, font: regularFont });
+    page.drawText(invoice.clientPhone, { x: 50, y: 565, size: 10, font: regularFont });
+    
+    // Items table
+    let yPosition = 500;
+    page.drawText('Description', { x: 50, y: yPosition, size: 12, font: boldFont });
+    page.drawText('Quantity', { x: 300, y: yPosition, size: 12, font: boldFont });
+    page.drawText('Unit Price', { x: 380, y: yPosition, size: 12, font: boldFont });
+    page.drawText('Total', { x: 480, y: yPosition, size: 12, font: boldFont });
+    
+    yPosition -= 30;
+    for (const item of invoice.items) {
+      page.drawText(item.description, { x: 50, y: yPosition, size: 10, font: regularFont });
+      page.drawText(String(item.quantity), { x: 300, y: yPosition, size: 10, font: regularFont });
+      page.drawText(formatCurrency(item.unitPrice, invoice.currencySymbol || "₹", invoice.currency || "INR"), { x: 380, y: yPosition, size: 10, font: regularFont });
+      page.drawText(formatCurrency(item.total, invoice.currencySymbol || "₹", invoice.currency || "INR"), { x: 480, y: yPosition, size: 10, font: regularFont });
+      yPosition -= 25;
     }
+    
+    // Totals
+    yPosition -= 20;
+    page.drawLine({ start: { x: 50, y: yPosition }, end: { x: 550, y: yPosition }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
+    yPosition -= 10;
+    
+    page.drawText(`Subtotal: ${formatCurrency(invoice.subtotal, invoice.currencySymbol || "₹", invoice.currency || "INR")}`, { x: 350, y: yPosition, size: 10, font: regularFont });
+    yPosition -= 20;
+    page.drawText(`GST (${invoice.gstRate}%): ${formatCurrency(invoice.gstAmount, invoice.currencySymbol || "₹", invoice.currency || "INR")}`, { x: 350, y: yPosition, size: 10, font: regularFont });
+    yPosition -= 20;
+    page.drawText(`Total: ${formatCurrency(invoice.totalAmount, invoice.currencySymbol || "₹", invoice.currency || "INR")}`, { x: 350, y: yPosition, size: 14, font: boldFont, color: rgb(0.06, 0.72, 0.63) });
+    
+    // Footer
+    yPosition -= 40;
+    page.drawText('Payment Information:', { x: 50, y: yPosition, size: 12, font: boldFont });
+    yPosition -= 20;
+    page.drawText(`UPI: ${invoice.upiId || "zerohub01@upi"}`, { x: 50, y: yPosition, size: 10, font: regularFont });
+    yPosition -= 20;
+    page.drawText(`Payment Terms: ${invoice.paymentTerms}`, { x: 50, y: yPosition, size: 10, font: regularFont });
+    
+    // Signatures
+    yPosition -= 60;
+    page.drawText('Signatures:', { x: 50, y: yPosition, size: 12, font: boldFont });
+    yPosition -= 25;
+    page.drawText('Client:', { x: 100, y: yPosition, size: 10, font: regularFont });
+    page.drawText(invoice.clientSignature || '(Pending)', { x: 200, y: yPosition, size: 10, font: regularFont });
+    page.drawText('ZERO OPS:', { x: 300, y: yPosition, size: 10, font: regularFont });
+    page.drawText(invoice.adminSignature || '(Pending)', { x: 400, y: yPosition, size: 10, font: regularFont });
+    
+    const bytes = await doc.save();
+    return Buffer.from(bytes);
   } catch (error) {
-    if (isMissingChromeError(error)) {
-      console.warn("[PDF] Invoice styled renderer unavailable (Chrome not installed). Falling back to simplified PDF.");
-      const { generateSimplePdf } = await import("./simplePdf.js");
-      return generateSimplePdf({
-        title: "ZERO OPS - Invoice",
-        subtitle: invoice.invoiceNumber || "",
-        rows: [
-          { label: "Invoice Number", value: invoice.invoiceNumber || "-" },
-          { label: "Client Name", value: invoice.clientName || "-" },
-          { label: "Client Email", value: invoice.clientEmail || "-" },
-          { label: "Client Phone", value: invoice.clientPhone || "-" },
-          { label: "Client Business", value: invoice.clientBusiness || "-" },
-          { label: "Due Date", value: new Date(invoice.dueDate).toLocaleDateString("en-IN") },
-          { label: "Subtotal", value: formatCurrency(Number(invoice.subtotal || 0), invoice.currencySymbol || "₹", invoice.currency || "INR") },
-          { label: "Tax", value: `${Number(invoice.gstRate || 0)}%` },
-          { label: "Total Amount", value: formatCurrency(Number(invoice.totalAmount || 0), invoice.currencySymbol || "₹", invoice.currency || "INR") },
-          { label: "Payment Terms", value: invoice.paymentTerms || "-" }
-        ],
-        footerNote: "This is a simplified fallback PDF because high-fidelity renderer is temporarily unavailable."
-      });
-    } else {
-      console.error("[PDF] Invoice styled PDF generation failed. Falling back to simplified PDF.", error);
-      const { generateEmergencyPdf } = await import("./emergencyPdf.js");
-      return generateEmergencyPdf("ZERO OPS - Invoice", [
-        `Invoice Number: ${invoice.invoiceNumber || "-"}`,
-        `Client Name: ${invoice.clientName || "-"}`,
-        `Client Email: ${invoice.clientEmail || "-"}`,
-        `Client Phone: ${invoice.clientPhone || "-"}`,
-        `Client Business: ${invoice.clientBusiness || "-"}`,
-        `Due Date: ${new Date(invoice.dueDate).toLocaleDateString("en-IN")}`,
-        `Total Amount: ${formatCurrency(Number(invoice.totalAmount || 0), invoice.currencySymbol || "₹", invoice.currency || "INR")}`,
-        `Payment Terms: ${invoice.paymentTerms || "-"}`
-      ]);
-    }
+    console.error("[PDF] Invoice PDF generation failed:", error);
+    throw { statusCode: 503, message: "PDF generation temporarily unavailable. Please try again shortly." };
   }
 }
