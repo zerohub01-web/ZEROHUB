@@ -105,7 +105,7 @@ body::before {
   @apply rounded-3xl border border-black/10;
   background: linear-gradient(170deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55));
   box-shadow: 0 28px 80px rgba(22, 33, 52, 0.15);
-  transform: rotate(-1.2deg);
+  transform: none;
 }
 
 .field {

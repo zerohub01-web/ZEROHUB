@@ -114,17 +114,19 @@ export default function ZeroControlInvoicesPage() {
     setSendingId(id);
     try {
       const { data } = await api.post(`/api/invoices/${id}/send`);
-      if (data?.emailSent === false) {
-        toast.error(data?.message || "Invoice marked as sent, but email delivery failed.");
+      if (data?.success === false) {
+        const whatsappError = String(data?.delivery?.whatsapp?.error || "").trim();
+        toast.error(whatsappError || data?.message || "Invoice delivery failed.");
       } else if (Array.isArray(data?.warnings) && data.warnings.length > 0) {
         toast(data?.message || "Invoice sent with warnings.");
       } else {
-        toast.success(data?.message || "Invoice email sent.");
+        toast.success(data?.message || "Invoice delivered successfully.");
       }
       await fetchData();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to send invoice.");
+      const message = String((error as any)?.response?.data?.message || "").trim();
+      toast.error(message || "Failed to send invoice.");
     } finally {
       setSendingId("");
     }

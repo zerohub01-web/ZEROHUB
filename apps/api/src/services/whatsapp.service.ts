@@ -390,12 +390,12 @@ export async function sendHeadlessInvoice(phone: string, invoiceData: HeadlessIn
   assertWhatsAppEnabled();
 
   const templateName = String(
-    invoiceData.templateName || process.env.META_INVOICE_TEMPLATE_NAME || ""
+    invoiceData.templateName || process.env.META_INVOICE_TEMPLATE_NAME || process.env.META_DEFAULT_TEMPLATE_NAME || ""
   ).trim();
 
   if (!templateName) {
     throw new WhatsAppError(
-      "META_INVOICE_TEMPLATE_NAME missing. Configure a Meta-approved invoice template for headless sends.",
+      "META_INVOICE_TEMPLATE_NAME missing. Configure META_INVOICE_TEMPLATE_NAME (or fallback META_DEFAULT_TEMPLATE_NAME) with a Meta-approved template.",
       500
     );
   }

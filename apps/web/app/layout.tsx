@@ -50,6 +50,13 @@ export function generateMetadata(): Metadata {
       description: "ZeroOps automates manual business workflows. Stop doing repetitive work. Scale operations with intelligent automation, custom integrations, and enterprise-grade security.",
       images: ["https://zeroops.in/logo.png"]
     },
+    icons: {
+      icon: [
+        { url: "/icon.png", type: "image/png" },
+        { url: "/icon.svg", type: "image/svg+xml" }
+      ],
+      apple: [{ url: "/apple-icon.png", type: "image/png" }]
+    },
     robots: {
       index: true,
       follow: true,

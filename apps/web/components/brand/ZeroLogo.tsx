@@ -12,7 +12,9 @@ interface ZeroLogoProps {
 }
 
 export function ZeroLogo({ variant = "primary", compact = false, className }: ZeroLogoProps) {
+  const [imageIndex, setImageIndex] = useState(0);
   const [imageOk, setImageOk] = useState(true);
+  const logoSources = ["/zero-logo.png", "/logo.png"];
 
   const variantClass =
     variant === "white"
@@ -36,14 +38,21 @@ export function ZeroLogo({ variant = "primary", compact = false, className }: Ze
     <div className={wrapperClass} aria-label="ZERO logo">
       {imageOk ? (
         <Image
-          src="/zero-logo.png?v=6"
+          src={logoSources[imageIndex] ?? "/zero-logo.png"}
           alt="ZERO"
           width={172}
           height={40}
           sizes="(max-width: 768px) 140px, 172px"
           className={`zero-logo-image ${variantClass}`}
           draggable={false}
-          onError={() => setImageOk(false)}
+          onError={() => {
+            const nextIndex = imageIndex + 1;
+            if (nextIndex < logoSources.length) {
+              setImageIndex(nextIndex);
+              return;
+            }
+            setImageOk(false);
+          }}
         />
       ) : (
         <div className={textClass}>

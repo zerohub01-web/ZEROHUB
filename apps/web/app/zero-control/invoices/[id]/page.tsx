@@ -83,12 +83,34 @@ interface SendInvoiceResponse {
   success?: boolean;
   portalLink?: string;
   message?: string;
+  warnings?: string[];
+  delivery?: {
+    pdf?: {
+      attempted?: boolean;
+      success?: boolean;
+    };
+    email?: {
+      attempted?: boolean;
+      success?: boolean;
+      error?: string;
+    };
+    whatsapp?: {
+      attempted?: boolean;
+      success?: boolean;
+      error?: string;
+    };
+  };
 }
 
 interface SentModalState {
   email: string;
   phone: string;
   portalLink: string;
+  warnings: string[];
+  emailDelivered: boolean;
+  whatsappDelivered: boolean;
+  whatsappError: string;
+  pdfGenerated: boolean;
 }
 
 interface BookingPrefillRecord {
@@ -185,7 +207,12 @@ export default function InvoiceEditorPage() {
   const [sentModalData, setSentModalData] = useState<SentModalState>({
     email: "",
     phone: "",
-    portalLink: ""
+    portalLink: "",
+    warnings: [],
+    emailDelivered: false,
+    whatsappDelivered: false,
+    whatsappError: "",
+    pdfGenerated: false
   });
   const [saveDefaults, setSaveDefaults] = useState(false);
   const [bookingIdInput, setBookingIdInput] = useState("");
@@ -597,22 +624,44 @@ export default function InvoiceEditorPage() {
     try {
       const { data } = await api.post<SendInvoiceResponse>(`/api/invoices/${id}/send`);
       const success = data?.success === true;
+      const warnings = Array.isArray(data?.warnings) ? data.warnings : [];
+      const emailDelivered = data?.delivery?.email?.success === true;
+      const whatsappDelivered = data?.delivery?.whatsapp?.success === true;
+      const pdfGenerated = data?.delivery?.pdf?.success === true;
+      const whatsappError = String(data?.delivery?.whatsapp?.error || "").trim();
+
       if (!success) {
-        throw new Error(data?.message || "Failed to send invoice.");
+        const reason =
+          whatsappError ||
+          warnings.join(", ") ||
+          data?.message ||
+          "Delivery failed on all channels.";
+        throw new Error(reason);
       }
 
       setForm((prev) => ({ ...prev, status: "SENT" }));
-      toast.success(`\u2705 Invoice sent to ${form.clientEmail}`);
+      if (emailDelivered && whatsappDelivered) {
+        toast.success(`Invoice delivered to ${form.clientEmail} via email and WhatsApp.`);
+      } else {
+        toast("Invoice delivered with channel warnings.");
+      }
 
       setShowSentModal(true);
       setSentModalData({
         email: form.clientEmail,
         phone: form.clientPhone,
-        portalLink: data.portalLink || `${getWebBase()}/portal/invoice/${id}`
+        portalLink: data.portalLink || `${getWebBase()}/portal/invoice/${id}`,
+        warnings,
+        emailDelivered,
+        whatsappDelivered,
+        whatsappError,
+        pdfGenerated
       });
     } catch (error) {
       console.error(error);
-      toast.error("\u274C Failed to send. Please try again.");
+      const apiMessage = String((error as any)?.response?.data?.message || "").trim();
+      const message = apiMessage || (error instanceof Error ? error.message : "Failed to send. Please try again.");
+      toast.error(message);
     } finally {
       setSending(false);
     }
@@ -974,26 +1023,43 @@ export default function InvoiceEditorPage() {
       {showSentModal ? (
         <div className="sent-modal-overlay" onClick={() => setShowSentModal(false)}>
           <div className="sent-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="sent-modal-icon">\u2705</div>
-            <h2 className="sent-modal-title">Document Sent Successfully</h2>
+            <div className={`sent-modal-icon ${sentModalData.emailDelivered || sentModalData.whatsappDelivered ? "ok" : "fail"}`}>
+              {sentModalData.emailDelivered || sentModalData.whatsappDelivered ? "OK" : "ERR"}
+            </div>
+            <h2 className="sent-modal-title">
+              {sentModalData.emailDelivered && sentModalData.whatsappDelivered
+                ? "Document Delivered Successfully"
+                : "Document Delivery Report"}
+            </h2>
 
             <div className="sent-channel-list">
               <div className="sent-channel">
                 <span className="channel-icon">{"\u{1F4E7}"}</span>
                 <div>
                   <div className="channel-label">Email sent via Resend</div>
-                  <div className="channel-detail">{sentModalData.email}</div>
+                  <div className="channel-detail">
+                    {sentModalData.emailDelivered ? sentModalData.email : "Email delivery failed"}
+                  </div>
                 </div>
-                <span className="channel-check">\u2713</span>
+                <span className={`channel-check ${sentModalData.emailDelivered ? "ok" : "fail"}`}>
+                  {sentModalData.emailDelivered ? "OK" : "FAIL"}
+                </span>
               </div>
 
               <div className="sent-channel">
                 <span className="channel-icon">{"\u{1F4AC}"}</span>
                 <div>
                   <div className="channel-label">WhatsApp notification</div>
-                  <div className="channel-detail">{sentModalData.phone}</div>
+                  <div className="channel-detail">
+                    {sentModalData.whatsappDelivered ? sentModalData.phone : "WhatsApp delivery failed"}
+                  </div>
+                  {!sentModalData.whatsappDelivered && sentModalData.whatsappError ? (
+                    <div className="channel-detail error">{sentModalData.whatsappError}</div>
+                  ) : null}
                 </div>
-                <span className="channel-check">\u2713</span>
+                <span className={`channel-check ${sentModalData.whatsappDelivered ? "ok" : "fail"}`}>
+                  {sentModalData.whatsappDelivered ? "OK" : "FAIL"}
+                </span>
               </div>
 
               <div className="sent-channel">
@@ -1015,6 +1081,17 @@ export default function InvoiceEditorPage() {
                 </button>
               </div>
             </div>
+
+            {sentModalData.warnings.length > 0 ? (
+              <div className="sent-warning-box">
+                <p className="sent-warning-title">Warnings</p>
+                <ul className="sent-warning-list">
+                  {sentModalData.warnings.map((warning) => (
+                    <li key={warning}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             <button className="sent-modal-close" onClick={() => setShowSentModal(false)}>
               Done
@@ -1120,8 +1197,28 @@ export default function InvoiceEditorPage() {
         }
 
         .sent-modal-icon {
-          font-size: 48px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 74px;
+          height: 74px;
+          border-radius: 9999px;
+          font-size: 19px;
+          font-weight: 800;
+          letter-spacing: 0.04em;
           margin-bottom: 16px;
+        }
+
+        .sent-modal-icon.ok {
+          color: #14532d;
+          background: #dcfce7;
+          border: 1px solid #86efac;
+        }
+
+        .sent-modal-icon.fail {
+          color: #7f1d1d;
+          background: #fee2e2;
+          border: 1px solid #fca5a5;
         }
 
         .sent-modal-title {
@@ -1166,6 +1263,10 @@ export default function InvoiceEditorPage() {
           margin-top: 2px;
         }
 
+        .channel-detail.error {
+          color: #b91c1c;
+        }
+
         .channel-detail.mono {
           font-size: 11px;
           font-family: monospace;
@@ -1174,9 +1275,17 @@ export default function InvoiceEditorPage() {
 
         .channel-check {
           margin-left: auto;
-          color: #2e7d32;
           font-weight: 700;
-          font-size: 16px;
+          font-size: 12px;
+          letter-spacing: 0.04em;
+        }
+
+        .channel-check.ok {
+          color: #2e7d32;
+        }
+
+        .channel-check.fail {
+          color: #b91c1c;
         }
 
         .channel-open-btn {
@@ -1213,6 +1322,33 @@ export default function InvoiceEditorPage() {
 
         .sent-modal-close:hover {
           background: #333;
+        }
+
+        .sent-warning-box {
+          margin-bottom: 14px;
+          border: 1px solid #fecaca;
+          background: #fff1f2;
+          border-radius: 10px;
+          padding: 10px 12px;
+          text-align: left;
+        }
+
+        .sent-warning-title {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #881337;
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+
+        .sent-warning-list {
+          margin: 0;
+          padding-left: 18px;
+          font-size: 12px;
+          color: #9f1239;
+          display: grid;
+          gap: 4px;
         }
 
         @media (max-width: 640px) {

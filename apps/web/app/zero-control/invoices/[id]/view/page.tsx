@@ -69,8 +69,9 @@ export default function InvoiceDetailViewPage() {
     setBusy(true);
     try {
       const { data } = await api.post(`/api/invoices/${invoice.id}/send`);
-      if (data?.emailSent === false) {
-        toast.error(data?.message || "Invoice marked as sent, but email delivery failed.");
+      if (data?.success === false) {
+        const whatsappError = String(data?.delivery?.whatsapp?.error || "").trim();
+        toast.error(whatsappError || data?.message || "Invoice delivery failed.");
       } else if (Array.isArray(data?.warnings) && data.warnings.length > 0) {
         toast(data?.message || "Invoice sent with warnings.");
       } else {
@@ -79,7 +80,8 @@ export default function InvoiceDetailViewPage() {
       await fetchInvoice();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to resend invoice.");
+      const message = String((error as any)?.response?.data?.message || "").trim();
+      toast.error(message || "Failed to resend invoice.");
     } finally {
       setBusy(false);
     }

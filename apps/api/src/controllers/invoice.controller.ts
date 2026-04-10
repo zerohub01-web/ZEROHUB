@@ -174,6 +174,26 @@ function buildDefaultPaymentFields(payload: InvoicePayload) {
   };
 }
 
+function getErrorMessage(error: unknown): string {
+  if (!error) return "Unknown error";
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+function mapWhatsAppWarningCode(errorMessage: string): string {
+  const textMessage = errorMessage.toLowerCase();
+  if (textMessage.includes("meta_invoice_template_name missing")) {
+    return "whatsapp_template_missing";
+  }
+  if (textMessage.includes("account not registered") || textMessage.includes("#133010")) {
+    return "whatsapp_account_not_registered";
+  }
+  if (textMessage.includes("token invalid or expired") || textMessage.includes("invalid oauth")) {
+    return "whatsapp_token_invalid";
+  }
+  return "whatsapp_send_failed";
+}
+
 export async function listInvoices(_req: Request, res: Response) {
   try {
     const invoices = await InvoiceModel.find().sort({ createdAt: -1 }).limit(500);
@@ -344,16 +364,11 @@ export async function sendInvoice(req: Request, res: Response) {
       return res.status(404).json({ message: "Invoice not found" });
     }
 
-    invoice.clientPortalVisible = true;
-    invoice.status = "SENT";
-    invoice.emailSentAt = new Date();
-    invoice.emailSentTo = invoice.clientEmail;
-    await invoice.save();
-
     const warnings: string[] = [];
     let pdfGenerated = false;
     let emailSent = false;
     let whatsappSent = false;
+    let whatsappErrorMessage = "";
     let pdfBuffer: Buffer | undefined;
 
     try {
@@ -392,14 +407,61 @@ export async function sendInvoice(req: Request, res: Response) {
         });
         whatsappSent = true;
       } catch (whatsappError) {
-        warnings.push("whatsapp_send_failed");
+        whatsappErrorMessage = getErrorMessage(whatsappError);
+        warnings.push(mapWhatsAppWarningCode(whatsappErrorMessage));
         console.error("Send invoice WhatsApp failed:", whatsappError);
       }
     } else {
       warnings.push("whatsapp_phone_missing");
     }
 
-    return res.status(200).json({ success: true });
+    const sentAtLeastOneChannel = emailSent || whatsappSent;
+
+    invoice.clientPortalVisible = true;
+    if (emailSent) {
+      invoice.emailSentAt = new Date();
+      invoice.emailSentTo = invoice.clientEmail;
+    }
+    if (sentAtLeastOneChannel) {
+      invoice.status = "SENT";
+    }
+    await invoice.save();
+
+    const uniqueWarnings = Array.from(new Set(warnings));
+    const responsePayload = {
+      success: sentAtLeastOneChannel,
+      code:
+        sentAtLeastOneChannel && uniqueWarnings.length === 0
+          ? "invoice_sent"
+          : sentAtLeastOneChannel
+            ? "invoice_sent_with_warnings"
+            : "invoice_delivery_failed",
+      message:
+        sentAtLeastOneChannel && uniqueWarnings.length === 0
+          ? "Invoice delivered successfully."
+          : sentAtLeastOneChannel
+            ? "Invoice delivered with partial channel failures."
+            : "Invoice delivery failed on all channels.",
+      portalLink: portalAccess.portalLink,
+      warnings: uniqueWarnings,
+      delivery: {
+        pdf: {
+          attempted: true,
+          success: pdfGenerated
+        },
+        email: {
+          attempted: true,
+          success: emailSent
+        },
+        whatsapp: {
+          attempted: Boolean(text(invoice.clientPhone)),
+          success: whatsappSent,
+          error: whatsappErrorMessage || undefined
+        }
+      }
+    };
+
+    return res.status(sentAtLeastOneChannel ? 200 : 502).json(responsePayload);
   } catch (error) {
     console.error("Send invoice failed:", error);
     return res.status(500).json({
