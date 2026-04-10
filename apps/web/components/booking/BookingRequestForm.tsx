@@ -78,6 +78,12 @@ function validateForm(values: BookingFormValues): FieldErrors {
 
   if (values.teamSize.trim().length < 1) {
     errors.teamSize = "Please share your team size.";
+  } else if (!/^\d+$/.test(values.teamSize.trim())) {
+    errors.teamSize = "Team size must be a valid number.";
+  } else if (parseInt(values.teamSize) < 1) {
+    errors.teamSize = "Team size must be at least 1.";
+  } else if (parseInt(values.teamSize) > 1000) {
+    errors.teamSize = "Team size seems too large. Please contact us directly.";
   }
 
   if (values.message.trim().length < 5) {
@@ -609,8 +615,8 @@ Thank you for choosing ZeroOps! ${SYMBOLS.rocket}
         {touched.businessType && errors.businessType ? <p className="text-xs text-red-600">{errors.businessType}</p> : null}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="grid gap-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-1">
           <label htmlFor="booking-service" className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
             Service
           </label>
@@ -620,7 +626,7 @@ Thank you for choosing ZeroOps! ${SYMBOLS.rocket}
             value={values.service}
             onChange={(event) => updateField("service", event.target.value)}
             required
-            className="field py-3"
+            className="field py-3 min-h-[44px]"
           >
             <option value="">Select service</option>
             {renderedServices.map((service) => (
@@ -629,23 +635,35 @@ Thank you for choosing ZeroOps! ${SYMBOLS.rocket}
               </option>
             ))}
           </select>
-          {touched.service && errors.service ? <p className="text-xs text-red-600">{errors.service}</p> : null}
+          {touched.service && errors.service ? <p className="text-xs text-red-600 mt-1">{errors.service}</p> : null}
         </div>
 
-        <div className="grid gap-1">
+        <div className="flex flex-col gap-1">
           <label htmlFor="booking-team-size" className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
             Team Size
           </label>
           <input
             id="booking-team-size"
             name="teamSize"
+            type="number"
+            min="1"
+            max="1000"
             value={values.teamSize}
-            onChange={(event) => updateField("teamSize", event.target.value)}
+            onChange={(event) => {
+              const value = event.target.value.replace(/[^0-9]/g, '');
+              updateField("teamSize", value);
+            }}
+            onKeyPress={(e) => {
+              if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'Enter') {
+                e.preventDefault();
+              }
+            }}
             required
             inputMode="numeric"
-            className="field py-3"
+            className="field py-3 min-h-[44px]"
+            placeholder="Number of team members"
           />
-          {touched.teamSize && errors.teamSize ? <p className="text-xs text-red-600">{errors.teamSize}</p> : null}
+          {touched.teamSize && errors.teamSize ? <p className="text-xs text-red-600 mt-1">{errors.teamSize}</p> : null}
         </div>
       </div>
 
