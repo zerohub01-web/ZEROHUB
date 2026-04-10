@@ -28,19 +28,19 @@ const focusAreas = [
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-8 md:pb-6">
-      <div className="soft-card p-4 md:p-5">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+    <footer className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-12 pb-4 md:pb-3">
+      <div className="soft-card p-3 md:p-4">
+        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-5">
           <div>
             <ZeroLogo variant="inverted" />
-            <p className="mt-2 text-sm text-[var(--muted)]">
+            <p className="mt-1 text-sm text-[var(--muted)]">
               ZERO builds business automation systems that reduce manual work and help teams scale operations.
             </p>
           </div>
 
           <div>
             <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">Quick Links</p>
-            <div className="mt-1 space-y-1 text-sm">
+            <div className="mt-0.5 space-y-0.5 text-sm">
               {quickLinks.map((item) => (
                 <div key={item.href}>
                   <Link
@@ -56,7 +56,7 @@ export function SiteFooter() {
 
           <div>
             <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">What We Do</p>
-            <div className="mt-1 space-y-1 text-sm text-[var(--ink)]">
+            <div className="mt-0.5 space-y-0.5 text-sm text-[var(--ink)]">
               {focusAreas.map((item) => (
                 <p key={item}>{item}</p>
               ))}
@@ -65,7 +65,7 @@ export function SiteFooter() {
 
           <div>
             <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">Address</p>
-            <p className="mt-1 text-sm text-[var(--ink)]">
+            <p className="mt-0.5 text-sm text-[var(--ink)]">
               ZERO Business Automation Systems
               <br />
               Hillside Meadows 56, MS Palaya, Vidhyaranyapura Post, Adityanagar, Vidyaranyapura, Bengaluru, Karnataka 560097
@@ -74,14 +74,14 @@ export function SiteFooter() {
 
           <div>
             <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">Contact</p>
-            <div className="mt-1 text-sm text-[var(--ink)] space-y-1">
+            <div className="mt-0.5 text-sm text-[var(--ink)] space-y-0.5">
               <p>Email: <a className="inline-flex min-h-[44px] items-center underline" href="mailto:zerohub01@gmail.com">zerohub01@gmail.com</a></p>
               <p>Phone: <a className="inline-flex min-h-[44px] items-center underline" href="tel:+919746927368">+91 9746927368</a></p>
             </div>
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-black/10 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+        <div className="mt-2 pt-2 border-t border-black/10 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <div className="flex flex-wrap gap-2">
             {socials.map((item) => (
               <a
