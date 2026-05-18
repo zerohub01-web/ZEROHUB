@@ -7,6 +7,7 @@
 - Production Domain: `https://www.zeroops.in`
 - Repository: `https://github.com/zerohub01-web/ZEROHUB`
 - Branch: `main`
+- Primary Commit: `275e553d6c98b84ec6b6778d659e0f98b2aee91a`
 - Generated (IST): `2026-05-18 18:41:33 +05:30`
 - Generated (UTC): `2026-05-18 13:11:33 UTC`
 - Prepared for: External referral / technical continuity
@@ -117,6 +118,8 @@ Files:
 - Account context confirmed with `gh auth status`.
 - Repository remote verified:
   - `origin https://github.com/zerohub01-web/ZEROHUB.git`
+- Push status:
+  - `main` pushed successfully to origin at commit `275e553`.
 
 ### Vercel
 - Initial account mismatch corrected by re-authentication.
@@ -126,8 +129,15 @@ Files:
 
 ### Render
 - No `RENDER_API_KEY` available locally at execution time.
-- Render service is expected to consume updates via GitHub integration after push to `main`.
-- If manual Render redeploy is required, trigger from Render dashboard for the linked service.
+- Live Render API probe response confirmed service is online but still on older build ID:
+  - `Build 2026.03.08.1519`
+- `render.yaml` in this repository references `https://github.com/zerohub01-web/zero-2kid`, which is a divergent Git history from `ZEROHUB`.
+- A sync branch with this remediation commit was pushed to Render-linked repo:
+  - `sync/zeroops-remediation-20260518`
+- Non-fast-forward protection prevents direct push of this repository `main` onto `zero-2kid/main` without explicit history reconciliation.
+- Recommended Render path:
+  1. Review/merge `sync/zeroops-remediation-20260518` into `zero-2kid/main`, or
+  2. Reconfigure Render service to deploy from `ZEROHUB` `main`.
 
 ---
 
