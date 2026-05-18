@@ -13,7 +13,7 @@ import {
   signInvoice,
   updateInvoice,
   updateInvoiceSignature
-} from "../controllers/invoice.controller";
+} from "../controllers/invoice.controller.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { verifyToken } from "../utils/auth.js";
 import { verifyPortalToken } from "../utils/portalToken.js";

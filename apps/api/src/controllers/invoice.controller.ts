@@ -4,7 +4,8 @@ import type { Request, Response } from "express";
 import { InvoiceModel, type InvoiceDocument, type InvoiceItem, type InvoiceStatus } from "../db/schema.js";
 import { generateInvoiceNumber } from "../utils/invoiceNumber.js";
 import { detectCurrency } from "../utils/currency.js";
-import { generateInvoicePDF, generateImprovedInvoicePDF, type InvoiceWithItems } from "../utils/generateInvoicePDF.js";
+import { generateInvoicePDF, type InvoiceWithItems } from "../utils/generateInvoicePDF.js";
+import { generateImprovedInvoicePDF } from "../utils/improvedInvoicePDF.js";
 import { buildPortalAccess } from "../utils/portalToken.js";
 import { sendInvoiceEmail, sendInvoiceSignedNotifications } from "../services/invoiceEmail.js";
 import { sendHeadlessInvoice, sendWhatsAppMessage } from "../services/whatsapp.service.js";
@@ -603,6 +604,10 @@ export async function saveInvoicePdf(req: Request, res: Response) {
     } catch (error) {
       console.error("Save invoice PDF failed:", error);
       return res.status(500).json({ message: "Failed to save invoice PDF" });
+    }
+  } catch (error) {
+    console.error("Save invoice PDF failed:", error);
+    return res.status(500).json({ message: "Failed to save invoice PDF" });
   }
 }
 
@@ -643,6 +648,10 @@ export async function updateInvoiceSignature(req: Request, res: Response) {
       console.error("Update signature failed:", error);
       return res.status(500).json({ message: "Failed to update signature" });
     }
+  } catch (error) {
+    console.error("Update signature failed:", error);
+    return res.status(500).json({ message: "Failed to update signature" });
+  }
 }
 
 export async function getPublicInvoiceView(req: Request, res: Response) {

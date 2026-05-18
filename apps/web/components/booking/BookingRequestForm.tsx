@@ -231,6 +231,7 @@ export function BookingRequestForm() {
     state: "idle",
     message: ""
   });
+  const [captchaExpired, setCaptchaExpired] = useState(false);
   const [captchaFallbackToV3, setCaptchaFallbackToV3] = useState(false);
   const recaptchaRef = useRef<RecaptchaCheckboxHandle | null>(null);
   const recaptchaMode = getRecaptchaMode();
@@ -302,6 +303,7 @@ export function BookingRequestForm() {
   const resetRecaptcha = () => {
     recaptchaRef.current?.reset();
     setRecaptchaToken("");
+    setCaptchaExpired(false);
   };
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -320,6 +322,13 @@ export function BookingRequestForm() {
 
     if (!isValid) {
       toast.error("Please fix the highlighted fields.");
+      return;
+    }
+
+    if (captchaExpired) {
+      const message = getCaptchaErrorMessage("captcha_expired");
+      setSubmitErrors([message]);
+      toast.error("Please complete the security verification again.");
       return;
     }
 
@@ -702,11 +711,17 @@ Thank you for choosing ZeroOps! ${SYMBOLS.rocket}
             onTokenChange={(token) => {
               setRecaptchaToken(token);
               if (token) {
+                setCaptchaExpired(false);
                 setSubmitErrors([]);
               }
             }}
             onStatusChange={(status) => {
               setCaptchaStatus(status);
+              if (status.state === "expired") {
+                setCaptchaExpired(true);
+                setRecaptchaToken("");
+                toast.error("Security token expired. Please verify again.");
+              }
               if (status.code === "captcha_invalid") {
                 setCaptchaFallbackToV3(true);
                 setRecaptchaToken("");

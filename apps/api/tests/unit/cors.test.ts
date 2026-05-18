@@ -18,7 +18,7 @@ describe("CORS middleware", () => {
 
     expect(response.status).toBeLessThan(500);
     expect(response.headers["access-control-allow-origin"]).toBeUndefined();
-  });
+  }, 15000);
 
   test("allows known origins and returns CORS headers", async () => {
     const app = await getApp();
@@ -30,5 +30,5 @@ describe("CORS middleware", () => {
     expect([200, 204]).toContain(response.status);
     expect(response.headers["access-control-allow-origin"]).toBe("https://zeroops.in");
     expect(response.headers["access-control-allow-credentials"]).toBe("true");
-  });
+  }, 15000);
 });

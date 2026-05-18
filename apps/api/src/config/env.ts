@@ -81,6 +81,7 @@ export const env = {
     process.env.WEB_BASE_URL || process.env.NEXT_PUBLIC_WEB_URL || process.env.CLIENT_ORIGIN,
     "http://localhost:3000"
   ),
+  cspMode: cleanEnvValue(process.env.CSP_MODE),
   googleClientId: GOOGLE_CLIENT_ID,
   googleClientSecret: GOOGLE_CLIENT_SECRET,
   googleRedirectUri: GOOGLE_REDIRECT_URI,

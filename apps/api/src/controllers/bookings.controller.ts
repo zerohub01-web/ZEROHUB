@@ -83,6 +83,11 @@ function parseBudget(rawValue: unknown) {
   return Number.isFinite(value) && value >= 0 ? value : null;
 }
 
+function toErrorMessage(error: unknown) {
+  if (error instanceof Error) return `${error.name}: ${error.message}`;
+  return String(error ?? "unknown-error");
+}
+
 function serializeBooking(booking: any) {
   const source = typeof booking.toObject === "function" ? booking.toObject() : booking;
 
@@ -196,9 +201,17 @@ export async function createBooking(req: Request, res: Response) {
   const trackingUrl = `${baseUrl}/booking-status/${booking.bookingId}`;
   const adminUrl = `${baseUrl}/zero-control`;
 
-  // Async pipeline should not block primary lead submission response.
-  Promise.resolve()
-    .then(async () => {
+  const responsePayload = {
+    message: "Your request has been received. We will contact you soon.",
+    bookingId: booking.bookingId,
+    booking: serializeBooking(booking)
+  };
+
+  res.status(201).json(responsePayload);
+
+  // Detached pipeline: never block request lifecycle on external notification providers.
+  void (async () => {
+    try {
       const notificationResults = await Promise.allSettled([
         sendBookingCreatedEmails({
           customerEmail: booking.email,
@@ -238,10 +251,18 @@ export async function createBooking(req: Request, res: Response) {
 
       const [emailResult, whatsappResult] = notificationResults;
       if (emailResult.status === "rejected") {
-        console.error("Lead confirmation/admin email step failed:", emailResult.reason);
+        console.error("[Booking][NotificationFailed]", {
+          bookingId: booking.bookingId,
+          service: "email",
+          error: toErrorMessage(emailResult.reason)
+        });
       }
       if (whatsappResult.status === "rejected") {
-        console.error("Lead client-side WhatsApp marker step failed:", whatsappResult.reason);
+        console.error("[Booking][NotificationFailed]", {
+          bookingId: booking.bookingId,
+          service: "whatsapp",
+          error: toErrorMessage(whatsappResult.reason)
+        });
       }
 
       await scheduleLeadFollowUps({
@@ -249,7 +270,7 @@ export async function createBooking(req: Request, res: Response) {
         leadCreatedAt: booking.createdAt ?? new Date(),
         leadPhone: booking.phone,
         dayZeroEmailSent: emailResult.status === "fulfilled",
-        dayZeroWhatsAppSent: false
+        dayZeroWhatsAppSent: whatsappResult.status === "fulfilled"
       });
 
       let proposalUrl = "";
@@ -269,7 +290,10 @@ export async function createBooking(req: Request, res: Response) {
           proposalUrl
         });
       } catch (proposalError) {
-        console.error("Lead proposal generation/email step failed:", proposalError);
+        console.error("[Booking][ProposalStepFailed]", {
+          bookingId: booking.bookingId,
+          error: toErrorMessage(proposalError)
+        });
       }
 
       await logActivity("LEAD_AUTOMATION_COMPLETED", "system", {
@@ -279,10 +303,13 @@ export async function createBooking(req: Request, res: Response) {
         score: booking.score,
         proposalUrl
       });
-    })
-    .catch((error) => {
-      console.error("Lead automation pipeline failed:", error);
-    });
+    } catch (error) {
+      console.error("[Booking][AutomationPipelineFailed]", {
+        bookingId: booking.bookingId,
+        error: toErrorMessage(error)
+      });
+    }
+  })();
 
   void logActivity("BOOKING_CREATED", booking.email, {
     bookingId: String(booking._id),
@@ -293,11 +320,7 @@ export async function createBooking(req: Request, res: Response) {
     score
   }).catch((error) => console.error("Activity log failed:", error));
 
-  return res.status(201).json({
-    message: "Your request has been received. We will contact you soon.",
-    bookingId: booking.bookingId,
-    booking: serializeBooking(booking)
-  });
+  return;
 }
 
 export async function getBookings(req: Request, res: Response) {

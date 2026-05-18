@@ -687,7 +687,7 @@ export async function generateContractPDF(contract: ContractForPdf): Promise<Buf
     const browser = await launchPdfBrowser();
     try {
     const page = await browser.newPage();
-    await page.setContent(buildContractHTML(contract), { waitUntil: "networkidle0" });
+    await page.setContent(buildContractHTML(contract), { waitUntil: "load" });
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,

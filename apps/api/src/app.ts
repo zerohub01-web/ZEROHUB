@@ -18,12 +18,15 @@ import { invoiceRouter } from "./routes/invoice.routes.js";
 import { contractRouter } from "./routes/contract.routes.js";
 import { proposalRouter } from "./routes/proposal.routes.js";
 import { getWhatsAppAutomationStatus } from "./services/whatsapp.service.js";
+import { applySecurityHeaders } from "./middleware/securityHeaders.js";
+import { securityRouter } from "./routes/security.routes.js";
 
 type RequestWithRawBody = express.Request & { rawBody?: string };
 
 export const app = express();
 
 app.set("trust proxy", 1);
+app.disable("x-powered-by");
 
 function isDbUnavailableError(error: unknown) {
   const message = error instanceof Error ? `${error.message}\n${error.stack ?? ""}` : String(error);
@@ -35,7 +38,12 @@ function isDbUnavailableError(error: unknown) {
   );
 }
 
-app.use(helmet.default());
+app.use(
+  helmet.default({
+    contentSecurityPolicy: false
+  })
+);
+app.use(applySecurityHeaders);
 app.use(
   cors({
     origin(origin, callback) {
@@ -66,6 +74,7 @@ app.use(
 app.use(
   express.json({
     limit: "1mb",
+    type: ["application/json", "application/*+json", "application/csp-report", "application/reports+json"],
     verify(req, _res, buf) {
       (req as RequestWithRawBody).rawBody = buf.toString("utf8");
     }
@@ -144,6 +153,7 @@ app.use("/api/proposals", express.static(getProposalsDirectoryPath()));
 app.use("/api/invoices/storage", express.static("storage/invoices"));
 app.use("/api/contracts/storage", express.static("storage/contracts"));
 
+app.use("/api", securityRouter);
 app.use("/api", publicRouter);
 app.use("/api/whatsapp", whatsappRouter);
 app.use("/", whatsappWebhookRouter);

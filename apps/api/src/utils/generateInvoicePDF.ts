@@ -1,4 +1,4 @@
-﻿import puppeteer from "puppeteer";
+import puppeteer from "puppeteer";
 import type { Invoice, InvoiceItem } from "../db/schema.js";
 import { formatCurrency } from "./currency.js";
 
@@ -11,7 +11,7 @@ export interface InvoiceWithItems extends Omit<Invoice, "items"> {
 }
 
 function buildInvoiceHTML(invoice: InvoiceWithItems): string {
-  const currency = (amount: number) => formatCurrency(amount, invoice.currencySymbol || "₹", invoice.currency || "INR");
+  const currency = (amount: number) => formatCurrency(amount, invoice.currencySymbol || "?", invoice.currency || "INR");
 
   const rows = invoice.items
     .map(
@@ -161,7 +161,7 @@ export async function generateInvoicePDF(invoice: InvoiceWithItems): Promise<Buf
     const browser = await launchPdfBrowser();
     try {
       const page = await browser.newPage();
-      await page.setContent(buildInvoiceHTML(invoice), { waitUntil: "networkidle0" });
+      await page.setContent(buildInvoiceHTML(invoice), { waitUntil: "load" });
 
       const pdf = await page.pdf({
         format: "A4",
